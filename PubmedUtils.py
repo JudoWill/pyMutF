@@ -5,9 +5,9 @@ import re
 
 
 
-def GetXML(ID_LIST):
-	POST_URL = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/epost.fcgi?db=pubmed'
-	RET_URL = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&query_key=1&mode=xml'
+def GetXML(ID_LIST, db = 'pubmed'):
+	POST_URL = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/epost.fcgi?db=%s' % db
+	RET_URL = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=%s&query_key=1&mode=xml' % db
 
 	pmid_list = ','.join(map(lambda x: str(x), ID_LIST))
 	post_req_url = POST_URL + '&id=' + pmid_list
@@ -21,6 +21,7 @@ def GetXML(ID_LIST):
 
 	xml_data = moz_emu.download(req_url, trycount = 3)
 	return xml_data
+
 
 def SearchPUBMED(search_sent, recent_date = None):
 
