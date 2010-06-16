@@ -2,7 +2,7 @@ import sys
 import logging, logging.handlers
 import PyMozilla
 import re
-
+from BeautifulSoup import BeautifulStoneSoup
 
 
 def GetXML(ID_LIST, db = 'pubmed'):
@@ -11,7 +11,7 @@ def GetXML(ID_LIST, db = 'pubmed'):
     assert db in valid_db
 
     POST_URL = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/epost.fcgi?db=%s' % db
-    RET_URL = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=%s&query_key=1&mode=xml' % db
+    RET_URL = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=%s&query_key=1&mode=xml&rettype=full' % db
 
     pmid_list = ','.join(map(lambda x: str(x), ID_LIST))
     post_req_url = POST_URL + '&id=' + pmid_list
@@ -42,3 +42,46 @@ def SearchPUBMED(search_sent, recent_date = None):
     id_list = re.findall('<Id>(\d*)</Id>', xml_data)
     id_nums = map(lambda x: int(x), id_list)
     return id_nums
+
+
+def ExtractPMCPar(xmldata):
+    """Yields sucessive paragraphs from a PMC xml"""
+
+    xmltree = BeautifulStoneSoup(xmldata)
+    for par in xmltree.findAll('p'):
+        buffer = ''
+        for item in par.findAll(text=True):
+            buffer += item.string.strip()
+
+        yield buffer
+
+
+def ExtractPubPar(xmldata):
+    """Yields sucessive paragraphs from a Pubmed xml"""
+
+    xmltree = BeautifulStoneSoup(xmldata)
+    yield xmltree.find('abstracttext').string.strip()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

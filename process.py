@@ -3,19 +3,20 @@ import csv, os
 import os.path
 from PubmedUtils import GetXML
 from threading import Semaphore, Timer
+from BeautifulSoup import BeautifulStoneSoup
 
 
 
 
-def GetXMLData(pmid, cachedir, timed_sem):
+def GetXMLData(pmid, cachedir, timed_sem, db = 'pubmed', use_cache = True):
     """Get an XML document either from the cache-directory or download it from Pubmed"""
 
     f = os.path.join(cachedir, pmid+'.xml')
-    if os.path.exists(f):
+    if os.path.exists(f) and use_cache:
         return open(f).read()
     else:
         with timed_sem:
-            out = GetXML([pmid])
+            out = GetXML([pmid], db=db)
         with open(f,'w') as handle:
             handle.write(out)
         return out
@@ -70,11 +71,15 @@ if __name__ == '__main__':
         for pmid in row['PubMed-ID'].split(','):
             key = (row['Gene-ID-2'], row['HIV-product-name'],
                    row['Interaction-short-phrase'], pmid)
-            if key in known_set:
-                continue
+            if key not in known_set:
+                print 'retrieving %s' % pmid
+                if pmid in pmid_pmc:
+                    print 'getting PMC'
+                    xmldata = GetXMLData(pmid_pmc[pmid], cachedir, timed_sem,
+                                         db = 'pmc', use_cache = False)
+                else:
+                    xmldata = GetXMLData(pmid, cachedir, timed_sem)
 
-            print 'retrieving %s' % pmid
-            xmldata = GetXMLData(pmid, cachedir, timed_sem)
 
             
 
