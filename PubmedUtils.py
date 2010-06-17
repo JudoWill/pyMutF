@@ -60,7 +60,9 @@ def ExtractPubPar(xmldata):
     """Yields sucessive paragraphs from a Pubmed xml"""
 
     xmltree = BeautifulStoneSoup(xmldata)
-    yield xmltree.find('abstracttext').string.strip()
+    v = xmltree.find('abstracttext')
+    if v != None:
+        yield v.string.strip()
 
 
 
