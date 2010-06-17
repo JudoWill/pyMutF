@@ -22,7 +22,7 @@ class Interaction(models.Model):
 class Mutation(models.Model):
 
     Mut = models.CharField(max_length = 20)
-    Gene = models.ForeignKey('Gene')
+    Gene = models.ForeignKey('Gene', blank = True)
     Interaction = models.ManyToManyField(Interaction, through = 'InteractionEffect')
 
 class InteractionEffect(models.Model):
