@@ -5,7 +5,9 @@ from PubmedUtils import *
 from threading import Semaphore, Timer
 from BeautifulSoup import BeautifulStoneSoup
 from mutation_finder import *
+from DistAnnot.Interaction.models import Gene
 
+import django.db.transaction
 
 def GetXMLData(pmid, cachedir, timed_sem, db='pubmed', use_cache=True):
     """Get an XML document either from the cache-directory or download it from Pubmed"""
@@ -40,6 +42,16 @@ class TimedSemaphore():
     def __exit__(self, typ, value, traceback):
         Timer(self.time, self.release).start()
 
+@django.db.transaction.commit_on_success
+def AddGenesToDB(INTER_LIST):
+    """Add genes from the interaction list into the database"""
+
+    for row in INTER_LIST:
+        t = {'Organism':'HIV', 'Name':row['HIV-product-name']}
+        Gene.objects.get_or_create(Entrez = int(row['Gene-ID-1']), defaults = t)
+        t = {'Organism':'Human', 'Name': row['Human-product-name']}
+        Gene.objects.get_or_create(Entrez = int(row['Gene-ID-2']), defaults = t)
+
 
 if __name__ == '__main__':
     cachedir = os.path.abspath('cachedata') + os.sep
@@ -47,12 +59,9 @@ if __name__ == '__main__':
     with open('hiv_interactions') as handle:
         inter_list = list(csv.DictReader(handle, delimiter='\t'))
 
-    with open('results.csv') as handle:
-        known_list = list(csv.DictReader(handle))
-    #remove the last pmid since its probably from an error and we don't want to skip it
-    if len(known_list):
-        lpmid = known_list[-1]['pmid']
-        known_list = filter(lambda x: x['pmid'] != lpmid, known_list)
+
+
+
 
 
     pmid_pmc = {}

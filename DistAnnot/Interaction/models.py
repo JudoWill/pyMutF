@@ -6,6 +6,7 @@ class Sentence(models.Model):
     Text = models.TextField()
     PMID = models.IntegerField()
     Interactions = models.ForeignKey('Interaction')
+    Genes = models.ManyToManyField('Gene')
 
 
 class Interaction(models.Model):
