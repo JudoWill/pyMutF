@@ -77,8 +77,9 @@ def AddArticleToDB(ParGen, MutFinder, PMID, interaction):
                                                         SentNum = sentnum,
                                                         Interactions = interaction,
                                                         defaults = {'Text':sent})
+
                 qset = obj.Mutation.filter(Mut = mut)
-                if not qset.exists() and mut is not None:
+                if not qset.exists() and mut is not None and isnew:
                     mut_obj = Mutation.objects.create(Mut = mut)
                     obj.Mutation.add(mut_obj)
 
@@ -96,7 +97,7 @@ if __name__ == '__main__':
         inter_list = list(csv.DictReader(handle, delimiter='\t'))
 
     print 'Adding Genes'
-    #AddGenesToDB(inter_list)
+    AddGenesToDB(inter_list)
 
 
 
