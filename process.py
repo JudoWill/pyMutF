@@ -5,7 +5,9 @@ from PubmedUtils import *
 from threading import Semaphore, Timer
 from BeautifulSoup import BeautifulStoneSoup
 from mutation_finder import *
-from DistAnnot.Interaction.models import Gene
+from DistAnnot.Interaction.models import Gene, Sentence, Interaction, InteractionType
+from nltk.tokenize import sent_tokenize
+from itertools import count, izip
 
 import django.db.transaction
 
@@ -52,6 +54,30 @@ def AddGenesToDB(INTER_LIST):
         t = {'Organism':'Human', 'Name': row['Human-product-name']}
         Gene.objects.get_or_create(Entrez = int(row['Gene-ID-2']), defaults = t)
 
+@django.db.transaction.commit_on_success
+def AddArticleToDB(ParGen, MutFinder, PMID, interaction):
+    """Add sentences into the database"""
+
+
+
+    for par, parnum in izip(ParGen, count(0)):
+        for sent, sentnum in izip(sent_tokenize(par), count(0)):
+            for mut, loc in mutFinder(par).items():
+                obj, isnew = Sentence.objects.get_or_create(PMID = PMID,
+                                                        ParNum = parnum,
+                                                        SentNum = sentnum,
+                                                        Interactions = interaction,
+                                                        defaults = {'Text':sent})
+                qset = obj.Mutation.filter(Mut = mut)
+                if not qset.exists():
+                    mut_obj = Mutation.objects.create(Mut = mut)
+                    obj.Mutation.add(mut_obj)
+
+
+
+
+
+
 
 if __name__ == '__main__':
     cachedir = os.path.abspath('cachedata') + os.sep
@@ -59,7 +85,8 @@ if __name__ == '__main__':
     with open('hiv_interactions') as handle:
         inter_list = list(csv.DictReader(handle, delimiter='\t'))
 
-
+    print 'Adding Genes'
+    AddGenesToDB(inter_list)
 
 
 
@@ -69,49 +96,40 @@ if __name__ == '__main__':
         for row in csv.DictReader(handle):
             pmid_pmc[row['PMID']] = row['PMCID']
 
-    known_set = set()
-    for row in known_list:
-        known_set.add((row['human-entrez'], row['hiv-protein'],
-                       row['interaction-type'], row['pmid']))
+
 
     mutFinder = mutation_finder_from_regex_filepath('regex.txt')
+    EUtilsSem = TimedSemaphore(2, 3)
 
-    timed_sem = TimedSemaphore(2, 3)
-    with open('results.csv', 'w') as handle:
-        fnames = ('hiv-protein', 'human-protein', 'human-entrez', 'interaction-type',
-                  'pmid', 'paragraph', 'protein', 'mutation', 'effect')
-        res_writter = csv.DictWriter(handle, fnames)
-        handle.write(','.join(fnames)+'\n')
-        res_writter.writerows(known_list)
+    for row in inter_list:
 
-        for row in inter_list:
-            for pmid in row['PubMed-ID'].split(','):
-                key = (row['Gene-ID-2'], row['HIV-product-name'],
-                       row['Interaction-short-phrase'], pmid)
-                if key not in known_set:
-                    print 'retrieving %s' % pmid
-                    if pmid in pmid_pmc:
-                        print 'getting PMC'
-                        xmldata = GetXMLData(pmid_pmc[pmid], cachedir, timed_sem,
-                                             db='pmc')
-                        pargen = ExtractPMCPar(xmldata)
-                    else:
-                        xmldata = GetXMLData(pmid, cachedir, timed_sem)
-                        pargen = ExtractPubPar(xmldata)
+        hiv_gene = Gene.objects.get(Entrez = int(row['Gene-ID-1']))
+        human_gene = Gene.objects.get(Entrez = int(row['Gene-ID-2']))
+        r, isnew = InteractionType.objects.get_or_create(Type=row['Interaction-short-phrase'])
+        inter, isnew = Interaction.objects.get_or_create(HIVGene = hiv_gene,
+                                                         HumanGene = human_gene,
+                                                         InteractionType = r)
 
-                    
-                    for par in pargen:
-                        for mut, loc in mutFinder(par).items():
-                            t = {'hiv-protein': row['HIV-product-name'],
-                                 'human-protein': row['Human-product-name'],
-                                 'human-entrez': row['Gene-ID-2'],
-                                 'interaction-type':row['Interaction-short-phrase'],
-                                 'pmid':pmid, 'paragraph':par, 'mutation':str(mut)}
+        for pmid in row['PubMed-ID'].split(','):
+            
 
-                            res_writter.writerow(t)
-                    handle.flush()
-                    os.fsync(handle)
-                
+
+
+            print 'retrieving %s' % pmid
+            if pmid in pmid_pmc:
+                print 'getting PMC'
+                xmldata = GetXMLData(pmid_pmc[pmid], cachedir, EUtilsSem,
+                                     db='pmc')
+                pargen = ExtractPMCPar(xmldata)
+            else:
+                xmldata = GetXMLData(pmid, cachedir, EUtilsSem)
+                pargen = ExtractPubPar(xmldata)
+
+            AddArticleToDB(pargen, MutFinder, pmid, inter)
+
+
+
+
 
 
 
