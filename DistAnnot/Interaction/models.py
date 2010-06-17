@@ -6,6 +6,7 @@ class Sentence(models.Model):
     Text = models.TextField()
     PMID = models.IntegerField()
     ParNum = models.IntegerField(blank = True, default = None)
+    SentNum = models.IntegerField(blank = True, default = None)
     Interactions = models.ForeignKey('Interaction')
     Genes = models.ManyToManyField('Gene')
 
