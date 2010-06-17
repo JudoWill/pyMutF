@@ -67,6 +67,7 @@ if __name__ == '__main__':
         fnames = ('hiv-protein', 'human-protein', 'human-entrez', 'interaction-type',
                   'pmid', 'paragraph', 'protein', 'mutation', 'effect')
         res_writter = csv.DictWriter(handle, fnames)
+        handle.write(','.join(fnames)+'\n')
         res_writter.writerows(known_list)
 
         for row in inter_list:
@@ -84,21 +85,19 @@ if __name__ == '__main__':
                         xmldata = GetXMLData(pmid, cachedir, timed_sem)
                         pargen = ExtractPubPar(xmldata)
 
-                    try:
-                        for par in pargen:
-                            for mut, loc in mutFinder(par).items():
-                                t = {'hiv-protein': row['HIV-product-name'],
-                                     'human-protein': row['Human-product-name'],
-                                     'human-entrez': row['Gene-ID-2'],
-                                     'interaction-type':row['Interaction-short-phrase'],
-                                     'pmid':pmid, 'paragraph':par, 'mutation':str(mut)}
+                    
+                    for par in pargen:
+                        for mut, loc in mutFinder(par).items():
+                            t = {'hiv-protein': row['HIV-product-name'],
+                                 'human-protein': row['Human-product-name'],
+                                 'human-entrez': row['Gene-ID-2'],
+                                 'interaction-type':row['Interaction-short-phrase'],
+                                 'pmid':pmid, 'paragraph':par, 'mutation':str(mut)}
 
-                                res_writter.writerow(t)
-                        handle.flush()
-                        os.fsync(handle)
-                    except:
-                        pass
-
+                            res_writter.writerow(t)
+                    handle.flush()
+                    os.fsync(handle)
+                
 
 
 
