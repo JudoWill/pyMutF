@@ -5,8 +5,8 @@ class Sentence(models.Model):
 
     Text = models.TextField()
     PMID = models.IntegerField()
-    ParNum = models.IntegerField(blank = True, default = None)
-    SentNum = models.IntegerField(blank = True, default = None)
+    ParNum = models.IntegerField(blank = True, default = None, null = True)
+    SentNum = models.IntegerField(blank = True, default = None, null = True)
     Interactions = models.ForeignKey('Interaction')
     Genes = models.ManyToManyField('Gene')
     Mutation = models.ManyToManyField('Mutation')
@@ -22,7 +22,7 @@ class Interaction(models.Model):
 class Mutation(models.Model):
 
     Mut = models.CharField(max_length = 20)
-    Gene = models.ForeignKey('Gene', blank = True)
+    Gene = models.ForeignKey('Gene', blank = True, null = True)
     Interaction = models.ManyToManyField(Interaction, through = 'InteractionEffect')
 
 class InteractionEffect(models.Model):
