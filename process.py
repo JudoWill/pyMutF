@@ -49,6 +49,11 @@ if __name__ == '__main__':
 
     with open('results.csv') as handle:
         known_list = list(csv.DictReader(handle))
+    #remove the last pmid since its probably from an error and we don't want to skip it
+    if len(known_list):
+        lpmid = known_list[-1]['pmid']
+        known_list = filter(lambda x: x['pmid'] != lpmid, known_list)
+
 
     pmid_pmc = {}
     with open('PMC-ids.csv') as handle:
