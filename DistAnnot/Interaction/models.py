@@ -9,7 +9,7 @@ class Sentence(models.Model):
     SentNum = models.IntegerField(blank = True, default = None)
     Interactions = models.ForeignKey('Interaction')
     Genes = models.ManyToManyField('Gene')
-
+    Mutation = models.ManyToManyField('Mutation')
 
 class Interaction(models.Model):
 
