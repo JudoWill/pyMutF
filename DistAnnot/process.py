@@ -5,11 +5,16 @@ from PubmedUtils import *
 from threading import Semaphore, Timer
 from BeautifulSoup import BeautifulStoneSoup
 from mutation_finder import *
-from DistAnnot.Interaction.models import Gene, Sentence, Interaction, InteractionType
+
 from nltk.tokenize import sent_tokenize
 from itertools import count, izip
 
 import django.db.transaction
+#from django.conf import settings
+#import DistAnnot.settings
+
+#settings.configure(default_settings = DistAnnot.settings)
+from DistAnnot.Interaction.models import Gene, Sentence, Interaction, InteractionType
 
 def GetXMLData(pmid, cachedir, timed_sem, db='pubmed', use_cache=True):
     """Get an XML document either from the cache-directory or download it from Pubmed"""
@@ -44,17 +49,18 @@ class TimedSemaphore():
     def __exit__(self, typ, value, traceback):
         Timer(self.time, self.release).start()
 
-@django.db.transaction.commit_on_success
+#@django.db.transaction.commit_on_success
 def AddGenesToDB(INTER_LIST):
     """Add genes from the interaction list into the database"""
 
     for row in INTER_LIST:
+        print row
         t = {'Organism':'HIV', 'Name':row['HIV-product-name']}
         Gene.objects.get_or_create(Entrez = int(row['Gene-ID-1']), defaults = t)
         t = {'Organism':'Human', 'Name': row['Human-product-name']}
         Gene.objects.get_or_create(Entrez = int(row['Gene-ID-2']), defaults = t)
 
-@django.db.transaction.commit_on_success
+#@django.db.transaction.commit_on_success
 def AddArticleToDB(ParGen, MutFinder, PMID, interaction):
     """Add sentences into the database"""
 
