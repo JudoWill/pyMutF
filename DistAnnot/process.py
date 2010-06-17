@@ -27,7 +27,10 @@ def GetXMLData(pmid, cachedir, timed_sem, db='pubmed', use_cache=True):
             out = GetXML([pmid], db=db)
         with open(f, 'w') as handle:
             tree = BeautifulStoneSoup(out)
-            handle.write(tree.prettyify())
+            if tree:
+                handle.write(tree.prettyify())
+            else:
+                return False
         return out
 
 class TimedSemaphore():
@@ -127,10 +130,16 @@ if __name__ == '__main__':
                 print 'getting PMC'
                 xmldata = GetXMLData(pmid_pmc[pmid], cachedir, EUtilsSem,
                                      db='pmc')
-                pargen = ExtractPMCPar(xmldata)
+                if xmldata:
+                    pargen = ExtractPMCPar(xmldata)
+                else:
+                    continue
             else:
                 xmldata = GetXMLData(pmid, cachedir, EUtilsSem)
-                pargen = ExtractPubPar(xmldata)
+                if xmldata:
+                    pargen = ExtractPubPar(xmldata)
+                else:
+                    continue
 
             AddArticleToDB(pargen, mutFinder, pmid, inter)
 
