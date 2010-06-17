@@ -61,7 +61,7 @@ def ExtractPubPar(xmldata):
 
     xmltree = BeautifulStoneSoup(xmldata)
     v = xmltree.find('abstracttext')
-    if v != None:
+    if v:
         yield v.string.strip()
 
 
