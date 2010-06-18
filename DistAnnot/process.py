@@ -14,7 +14,7 @@ import django.db.transaction
 #import DistAnnot.settings
 
 #settings.configure(default_settings = DistAnnot.settings)
-from Interaction.models import Gene, Sentence, Interaction, InteractionType, Mutation
+from Interaction.models import Gene, Sentence, Interaction, InteractionType, Mutation, Article
 
 def GetXMLData(pmid, cachedir, timed_sem, db='pubmed', use_cache=True):
     """Get an XML document either from the cache-directory or download it from Pubmed"""
@@ -25,13 +25,19 @@ def GetXMLData(pmid, cachedir, timed_sem, db='pubmed', use_cache=True):
     else:
         with timed_sem:
             out = GetXML([pmid], db=db)
-        with open(f, 'w') as handle:
-            tree = BeautifulStoneSoup(out)
-            if tree:
-                handle.write(tree.prettyify())
-            else:
-                return False
-        return out
+        if len(out) < 10:
+            return False
+        try:
+            with open(f, 'w') as handle:
+                tree = BeautifulStoneSoup(out)
+                if tree is not None:
+                    handle.write(tree.prettyify())
+                else:
+                    return False
+            return out
+        except TypeError:
+            print 'bad getting with %s' % pmid
+            return False
 
 class TimedSemaphore():
     def __init__(self, timer, total):
@@ -64,19 +70,29 @@ def AddGenesToDB(INTER_LIST):
         Gene.objects.get_or_create(Entrez = int(row['Gene-ID-2']), defaults = t)
 
 @django.db.transaction.commit_on_success
-def AddArticleToDB(ParGen, MutFinder, PMID, interaction):
+def AddArticleToDB(ParGen, MutFinder, article, interaction):
     """Add sentences into the database"""
 
+    def JoinSent(sent_list, ind):
+        if ind == 0:
+            return sent_list[ind]+sent_list[ind+1]
+        elif ind == len(sent_list)-1:
+            return sent_list[ind-1]+sent_list[ind]
+        else:
+            
+            return ' '.join(sent_list[ind-1:ind+1])
 
 
     for par, parnum in izip(ParGen, count(0)):
-        for sent, sentnum in izip(sent_tokenize(par), count(0)):
+        sent_list = list(sent_tokenize(par))
+
+        for sent, sentnum in izip(sent_list, count(0)):
             for mut, loc in mutFinder(par).items():
-                obj, isnew = Sentence.objects.get_or_create(PMID = PMID,
-                                                        ParNum = parnum,
-                                                        SentNum = sentnum,
-                                                        Interactions = interaction,
-                                                        defaults = {'Text':sent})
+                obj, isnew = Sentence.objects.get_or_create(Article = article,
+                                                ParNum = parnum,
+                                                SentNum = sentnum,
+                                                Interactions = interaction,
+                                                defaults = {'Text':JoinSent(sent_list, sentnum)})
 
                 qset = obj.Mutation.filter(Mut = mut)
                 if not qset.exists() and mut is not None and isnew:
@@ -122,28 +138,32 @@ if __name__ == '__main__':
                                                          InteractionType = r)
 
         for pmid in row['PubMed-ID'].split(','):
-            
+            article, isnew = Article.objects.get_or_create(PMID = int(pmid))
+            if not Sentence.objects.filter(Interactions = inter,
+                                           Article = article).exists():
 
 
-
-            print 'retrieving %s' % pmid
-            if pmid in pmid_pmc:
-                print 'getting PMC'
-                xmldata = GetXMLData(pmid_pmc[pmid], cachedir, EUtilsSem,
-                                     db='pmc')
-                if xmldata:
-                    pargen = ExtractPMCPar(xmldata)
+                print 'retrieving %s' % pmid
+                if pmid in pmid_pmc:
+                    print 'getting PMC'
+                    article.PMCID = pmid_pmc[pmid]
+                    article.save()
+                    xmldata = GetXMLData(pmid_pmc[pmid], cachedir, EUtilsSem,
+                                         db='pmc')
+                    if xmldata:
+                        pargen = ExtractPMCPar(xmldata)
+                    else:
+                        continue
                 else:
-                    continue
+                    xmldata = GetXMLData(pmid, cachedir, EUtilsSem)
+                    if xmldata:
+                        pargen = ExtractPubPar(xmldata)
+                    else:
+                        continue
+
+                AddArticleToDB(pargen, mutFinder, article, inter)
             else:
-                xmldata = GetXMLData(pmid, cachedir, EUtilsSem)
-                if xmldata:
-                    pargen = ExtractPubPar(xmldata)
-                else:
-                    continue
-
-            AddArticleToDB(pargen, mutFinder, pmid, inter)
-
+                print 'Aldready wrote: %s'  % pmid
 
 
 
