@@ -10,6 +10,7 @@ class Sentence(models.Model):
     Interactions = models.ForeignKey('Interaction')
     Genes = models.ManyToManyField('Gene')
     Mutation = models.ManyToManyField('Mutation')
+    Article = models.ForeignKey('Article', null = True, default = None)
 
 class Interaction(models.Model):
 
@@ -40,3 +41,10 @@ class Gene(models.Model):
 class InteractionType(models.Model):
 
     Type = models.CharField(max_length = 256)
+
+class Article(models.Model):
+
+    PMID = models.IntegerField()
+    PMCID = models.CharField(max_length = 20, blank=True, null = True,
+                             default = None)
+    
