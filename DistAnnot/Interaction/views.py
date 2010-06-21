@@ -4,9 +4,6 @@ from django.conf import settings
 # Create your views here.
 
 
-settings.MENUITEMS = {'root': (_('Home'), 'home')}
-
-
 
 def index(request):
 

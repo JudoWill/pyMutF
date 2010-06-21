@@ -1,4 +1,4 @@
-{%  load menu_bars %}
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -7,24 +7,32 @@
     <link rel="stylesheet" href="site_media/blueprint/print.css" type="text/css" media="print">
     <!--[if lt IE 8]><link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
 
-    <title>Annotation Project : {% block subtitle %} Home {%  endblock %}</title>
+    <title>Annotation Project</title>
 </head>
 <body>
     <div class="container">
        <div class="span-24 last">
         {% block headerinfo %}
-        Annotation Project
+        <img src="site_media/Niaid-hiv-virion-mod.jpg" width="50" height="50">
+        <h1>Annotation Project</h1>
         {%  endblock %}
         </div>
         <div class="span-20">
+            <h2>{%  block subtitle %}Home{% endblock %}</h2>
             {% block content %}
             Main content
             {% endblock %}
         </div>
         <div class="span-4 last">
             {% block navigation %}
-            Navigation
-            {% menu root home %}
+            <h2>Navigation</h2>
+            {% if navlist %}
+            <ul>
+            {% for nav in navlist %}
+            <h3><a href="{{ nav.url }}">{{ nav.text }}</a></h3>
+            {% endfor %}
+            </ul>
+            {% endif %}
             {% endblock %}
         </div>
         <div class="span-24 last">
