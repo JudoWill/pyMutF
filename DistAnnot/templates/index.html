@@ -34,6 +34,13 @@
             </ul>
             {% endif %}
             {% endblock %}
+			{% block login %}
+			{% if user.is_authenticated %}
+			<p>Logged in as: <i>{{ user.username }}</i><p>
+			{% else %}
+			<p>Not logged in. Go <a href="{% url login %}">here</a> to login.<p>
+			{% endif %}
+			{% endblock %}
         </div>
         <div class="span-24 last">
             {% block footer %}

@@ -7,4 +7,8 @@ from django.conf import settings
 
 def index(request):
 
-    return render_to_response('index.html')
+    odict = {'user': request.user}
+    return render_to_response('index.html', odict)
+
+def login(request):
+    return render_to_response('index.html', odict) #obviously need to fix this
