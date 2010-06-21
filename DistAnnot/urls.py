@@ -18,7 +18,7 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
-    (r'^index.html', 'Interaction.views.index'),
+    url(r'^index.html', 'Interaction.views.index', name = 'home'),
     (r'^interactions/', include('Interaction.urls'))
 )
 

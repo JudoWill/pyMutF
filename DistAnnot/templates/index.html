@@ -1,3 +1,4 @@
+{%  load menu_bars %}
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -6,21 +7,30 @@
     <link rel="stylesheet" href="site_media/blueprint/print.css" type="text/css" media="print">
     <!--[if lt IE 8]><link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
 
-    <title>THIS WORKS</title>
+    <title>Annotation Project : {% block subtitle %} Home {%  endblock %}</title>
 </head>
 <body>
     <div class="container">
        <div class="span-24 last">
-        Header
+        {% block headerinfo %}
+        Annotation Project
+        {%  endblock %}
         </div>
-        <div class="span-4">
-            Left sidebar
-        </div>
-        <div class="span-16">
+        <div class="span-20">
+            {% block content %}
             Main content
+            {% endblock %}
         </div>
         <div class="span-4 last">
-            Right sidebar
+            {% block navigation %}
+            Navigation
+            {% menu root home %}
+            {% endblock %}
+        </div>
+        <div class="span-24 last">
+            {% block footer %}
+            Footer
+            {% endblock %}
         </div>
        </div>
 </body>
