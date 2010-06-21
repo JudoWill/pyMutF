@@ -4,6 +4,9 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 admin.autodiscover()
 
+import Interaction.views
+import Interaction.urls
+
 urlpatterns = patterns('',
     # Example:
     # (r'^DistAnnot/', include('DistAnnot.foo.urls')),
@@ -14,4 +17,6 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
+    (r'^index.html', 'Interaction.views.index'),
+    (r'^interactions/', include('Interaction.urls'))
 )
