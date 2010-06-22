@@ -8,7 +8,7 @@ class Sentence(models.Model):
     ParNum = models.IntegerField(blank = True, default = None, null = True)
     SentNum = models.IntegerField(blank = True, default = None, null = True)
     Interactions = models.ForeignKey('Interaction')
-    Genes = models.ManyToManyField('Gene')
+    Genes = models.ManyToManyField('Gene', through = 'GeneAnnotation')
     Mutation = models.ManyToManyField('Mutation')
     Article = models.ForeignKey('Article', null = True, default = None)
 
@@ -37,6 +37,11 @@ class Gene(models.Model):
     Organism = models.CharField(max_length = 256)
     Name = models.CharField(max_length = 256)
     Entrez = models.IntegerField()
+
+class GeneAnnotation(models.Model):
+    
+    Sentence = models.ForeignKey('Sentence')
+    Gene = models.ForeignKey('Gene')
 
 class InteractionType(models.Model):
 
