@@ -18,9 +18,11 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
-	url(r'login.html', 'Interaction.views.login', name = 'login'),
+	url(r'login.html', 'django.contrib.auth.views.login', name = 'login'),
+	url(r'logout.html', 'django.contrib.auth.views.logout', name = 'logout'),
     url(r'^index.html', 'Interaction.views.index', name = 'home'),
-    (r'^interactions/', include('Interaction.urls'))
+    url(r'', 'Interaction.views.index')
+	#(r'^interactions/', include('Interaction.urls'))
 )
 
 if settings.DEBUG:
