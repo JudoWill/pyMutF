@@ -103,3 +103,5 @@ INSTALLED_APPS = (
      'django.contrib.admin',
     'south'
 )
+
+LOGIN_REDIRECT_URL = '/index.html'
