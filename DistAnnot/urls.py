@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     url(r'^index.html', 'Interaction.views.index', name = 'home'),
 
 	#(r'^interactions/', include('Interaction.urls'))
+    (r'^annotations/', include('Annot.urls'))
 )
 
 if settings.DEBUG:
