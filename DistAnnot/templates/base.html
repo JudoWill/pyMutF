@@ -3,9 +3,9 @@
         "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <link rel="stylesheet" href="site_media/blueprint/screen.css" type="text/css" media="screen, projection">
-    <link rel="stylesheet" href="site_media/blueprint/print.css" type="text/css" media="print">
-    <!--[if lt IE 8]><link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
+    <link rel="stylesheet" href="{{ MEDIA_URL }}/blueprint/screen.css" type="text/css" media="screen, projection">
+    <link rel="stylesheet" href="{{ MEDIA_URL }}/blueprint/print.css" type="text/css" media="print">
+    <!--[if lt IE 8]><link rel="stylesheet" href="{{ MEDIA_URL }}/blueprint/ie.css" type="{{ MEDIA_URL }}/css" media="screen, projection"><![endif]-->
 
     <title>Annotation Project</title>
 </head>
@@ -13,7 +13,7 @@
     <div class="container">
        <div class="span-24 last">
         {% block headerinfo %}
-        <img src="site_media/logo.jpg" width="50" height="50">
+        <img src="{{ MEDIA_URL }}/logo.jpg" width="50" height="50">
         <h1>Annotation Project</h1>
         {%  endblock %}
         </div>
