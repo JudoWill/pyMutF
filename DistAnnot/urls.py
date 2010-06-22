@@ -21,7 +21,7 @@ urlpatterns = patterns('',
 	url(r'login.html', 'django.contrib.auth.views.login', name = 'login'),
 	url(r'logout.html', 'django.contrib.auth.views.logout', name = 'logout'),
     url(r'^index.html', 'Interaction.views.index', name = 'home'),
-    url(r'', 'Interaction.views.index')
+
 	#(r'^interactions/', include('Interaction.urls'))
 )
 
