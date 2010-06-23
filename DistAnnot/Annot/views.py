@@ -22,6 +22,7 @@ def LabelMutation(request):
         form = MutationAnnotForm(request.POST)
         if form.is_valid():
             mut = form.save(commit = False)
+            mut.User = request.User
             mut.save()
             mut.update_link()
             return HttpResponseRedirect(reverse('LabelMutation'))
