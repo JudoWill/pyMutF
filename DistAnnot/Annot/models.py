@@ -8,10 +8,15 @@ class MutationAnnot(models.Model):
     User = models.ForeignKey(User)
     Mutation = models.ForeignKey(Mutation)
     GeneChosen = models.ForeignKey(Gene)
-    
+
+    def update_link(self):
+        self.Mutation.Gene = self.GeneChosen
 
 class InteractionEffectAnnot(models.Model):
 
     User = models.ForeignKey(User)
     InteractionEffect = models.ForeignKey(InteractionEffect)
     EffectChosen = models.ForeignKey(EffectType)
+
+    def update_link(self):
+        self.InteractionEffect.Gene = self.EffectChosen
