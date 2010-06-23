@@ -30,7 +30,6 @@ class InteractionEffect(models.Model):
 
     Interaction = models.ForeignKey('Interaction')
     Mutation = models.ForeignKey('Mutation')
-    Type = models.CharField(max_length = 256)
     EffectType = models.ForeignKey('EffectType', null = True)
 
 class Gene(models.Model):
