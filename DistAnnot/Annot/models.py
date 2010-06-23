@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from Interaction.models import Mutation, InteractionEffect, Gene, EffectType
+from DistAnnot.Interaction.models import Mutation, InteractionEffect, Gene, EffectType
 
 # Create your models here.
 class MutationAnnot(models.Model):

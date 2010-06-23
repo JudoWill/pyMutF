@@ -26,10 +26,13 @@
         <div class="span-4 last">
             {% block navigation %}
             <h2>Navigation</h2>
+            <ul>
+            <li><h3><a href="{% url LabelMutation  %}">Start Labeling!</a></h3></li>
+            </ul>
             {% if navlist %}
             <ul>
             {% for nav in navlist %}
-            <h3><a href="{{ nav.url }}">{{ nav.text }}</a></h3>
+            <li><h3><a href="{{ nav.url }}">{{ nav.text }}</a></h3></li>
             {% endfor %}
             </ul>
             {% endif %}

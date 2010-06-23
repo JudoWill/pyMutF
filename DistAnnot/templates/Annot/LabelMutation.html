@@ -1,3 +1,7 @@
 {% extends "base.html" %}
 
 {% block subtitle %}Single Annotation{% endblock %}
+
+{% block content %}
+{{ MutAnnotForm.as_table }}
+{% endblock %}
