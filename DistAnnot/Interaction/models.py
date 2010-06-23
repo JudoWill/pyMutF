@@ -31,6 +31,7 @@ class InteractionEffect(models.Model):
     Interaction = models.ForeignKey('Interaction')
     Mutation = models.ForeignKey('Mutation')
     Type = models.CharField(max_length = 256)
+    EffectType = models.ForeignKey('EffectType', null = True)
 
 class Gene(models.Model):
 
@@ -46,6 +47,10 @@ class GeneAnnotation(models.Model):
 class InteractionType(models.Model):
 
     Type = models.CharField(max_length = 256)
+
+class EffectType(models.Model):
+    Slug = models.SlugField(max_length = 256)
+    Description = models.CharField(max_length = 256)
 
 class Article(models.Model):
 
