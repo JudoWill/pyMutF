@@ -7,7 +7,7 @@ from django.utils.safestring import mark_safe
 class AutoCompleteTagInput(forms.TextInput):
     class Media:
         css = {
-            'all': ('jquery.autocomplete.css',)
+            'all': (settings.MEDIA_URL+'/'+'jquery.autocomplete.css',)
         }
         js = (
             settings.MEDIA_URL+'/'+'lib/jquery.js',
@@ -29,7 +29,7 @@ class AutoCompleteTagInput(forms.TextInput):
                                     ensure_ascii=False)
         return output + mark_safe(u'''<script type="text/javascript">
             jQuery("#id_%s").autocomplete(%s, {
-                width: 150,
+                width: 700,
                 max: 10,
                 highlight: false,
                 multiple: true,

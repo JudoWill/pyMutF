@@ -2,8 +2,8 @@ from django.forms import ModelForm
 from django import forms
 from DistAnnot.Annot.models import MutationAnnot
 from DistAnnot.Interaction.models import Gene
-from widgets import AutoCompleteTagInput,CustomJQueryACWidget
-from autocomplete import ModelChoiceField
+from widgets import AutoCompleteTagInput
+
 
 class MutationAnnotForm(ModelForm):
     class Meta:
