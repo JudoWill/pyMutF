@@ -8,7 +8,7 @@
 
 {% block content %}
 <p>{{ sentence.Text }}</p>
-<form action="" method="post">
+<form action="" method="post"> {% csrf_token %}
 {{ MutAnnotForm.as_ul }}
 <p><input type="submit"/></p>
 </form>
