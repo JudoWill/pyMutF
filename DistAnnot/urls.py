@@ -5,8 +5,7 @@ from django.conf import settings
 from django.contrib import admin
 admin.autodiscover()
 
-import Interaction.views
-import Interaction.urls
+
 
 urlpatterns = patterns('',
     # Example:
@@ -21,7 +20,6 @@ urlpatterns = patterns('',
 	url(r'login.html', 'django.contrib.auth.views.login', name = 'login'),
 	url(r'logout.html', 'django.contrib.auth.views.logout', name = 'logout'),
     url(r'^index.html', 'Interaction.views.index', name = 'home'),
-
 	#(r'^interactions/', include('Interaction.urls'))
     (r'^annotations/', include('Annot.urls'))
 )

@@ -1,8 +1,15 @@
 {% extends "base.html" %}
 
+{% block extrahead %}
+{{ MutAnnotForm.media }}
+{% endblock %}
+
 {% block subtitle %}Single Annotation{% endblock %}
 
 {% block content %}
 <p>{{ sentence.Text }}</p>
-{{ MutAnnotForm.as_table }}
+<form action="" method="post">
+{{ MutAnnotForm.as_p }}
+<p><input type="submit"/></p>
+</form>
 {% endblock %}

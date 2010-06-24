@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
 
@@ -9,17 +10,17 @@ class AutoCompleteTagInput(forms.TextInput):
             'all': ('jquery.autocomplete.css',)
         }
         js = (
-            'lib/jquery.js',
-            'lib/jquery.bgiframe.min.js',
-            'lib/jquery.ajaxQueue.js',
-            'jquery.autocomplete.js'
+            settings.MEDIA_URL+'/'+'lib/jquery.js',
+            settings.MEDIA_URL+'/'+'lib/jquery.bgiframe.min.js',
+            settings.MEDIA_URL+'/'+'lib/jquery.ajaxQueue.js',
+            settings.MEDIA_URL+'/'+'jquery.autocomplete.js'
         )
 
     def render(self, name, value, attrs=None):
         """Must be passed a ValueQuerySet!!!"""
         output = super(AutoCompleteTagInput, self).render(name, value, attrs)
 
-        qset = attrs['queryset']
+        qset = self.attrs['queryset']
         tag_items = []
         for item in qset:
             for val in item.values():

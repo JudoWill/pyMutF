@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 
-from forms import MutationAnnotForm
+from forms import MutationAnnotForm, AnnotForm
 
 
 @login_required
@@ -17,7 +17,6 @@ def LabelMutation(request):
 
     if request.method == 'POST':
 
-        form = MutationAnnotForm(request.POST)
         if form.is_valid():
             mut = form.save(commit = False)
             mut.User = request.User
@@ -25,8 +24,7 @@ def LabelMutation(request):
             mut.update_link()
             return HttpResponseRedirect(reverse('LabelMutation'))
 
-    form = MutationAnnotForm()
-
+    form = AnnotForm()
     sentence = Sentence.objects.all().order_by('?')[0]
     out_dict = {'MutAnnotForm':form, 'sentence': sentence}
 

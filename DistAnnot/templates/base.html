@@ -6,7 +6,8 @@
     <link rel="stylesheet" href="{{ MEDIA_URL }}/blueprint/screen.css" type="text/css" media="screen, projection">
     <link rel="stylesheet" href="{{ MEDIA_URL }}/blueprint/print.css" type="text/css" media="print">
     <!--[if lt IE 8]><link rel="stylesheet" href="{{ MEDIA_URL }}/blueprint/ie.css" type="{{ MEDIA_URL }}/css" media="screen, projection"><![endif]-->
-
+    {% block extrahead %}
+    {% endblock %}
     <title>Annotation Project</title>
 </head>
 <body>
