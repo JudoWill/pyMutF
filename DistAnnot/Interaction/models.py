@@ -37,6 +37,11 @@ class Gene(models.Model):
     Organism = models.CharField(max_length = 256)
     Name = models.CharField(max_length = 256)
     Entrez = models.IntegerField()
+    ExtraNames = models.ManyToManyField('ExtraGeneName')
+
+class ExtraGeneName(models.Model):
+    
+    Name = models.CharField(max_length = 256)
 
 class GeneAnnotation(models.Model):
     
