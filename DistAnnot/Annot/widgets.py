@@ -17,14 +17,15 @@ class AutoCompleteTagInput(forms.TextInput):
         )
 
     def render(self, name, value, attrs=None):
-        """Must be passed a ValueQuerySet!!!"""
+        """Must be passed a QuerySet!!!"""
         output = super(AutoCompleteTagInput, self).render(name, value, attrs)
 
         qset = self.attrs['queryset']
+        mapping = self.attrs['mapping']
         tag_items = []
         for item in qset:
-            for val in item.values():
-                tag_items.append(str(val))
+            for key, fun in mapping.items():
+                tag_items.append(key+':'+str(fun(item)))
         tag_list = simplejson.dumps(tag_items,
                                     ensure_ascii=False)
         return output + mark_safe(u'''<script type="text/javascript">
