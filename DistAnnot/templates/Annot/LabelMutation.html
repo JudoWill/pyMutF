@@ -7,9 +7,17 @@
 {% block subtitle %}Single Annotation{% endblock %}
 
 {% block content %}
+
+<h4>Instructions</h4>
+<p>Use the form below to annotate the text that has been provided.  Annotate <b>ALL GENES</b> in the text and then annotate the gene which has been mutated.
+In this case only annotate the mutation: <b>{{ mut.Mut }}</b></p>
+
 <p>{{ sentence.Text }}</p>
+
+<p><a href="{% url LabelMutation %}">Click here to skip this task.</a></p>
 <form action="" method="post"> {% csrf_token %}
 {{ MutAnnotForm.as_ul }}
-<p><input type="submit"/></p>
+<p><input type="submit" value="Submit"/><input type="submit" value="Skip"/></p>
+
 </form>
 {% endblock %}
