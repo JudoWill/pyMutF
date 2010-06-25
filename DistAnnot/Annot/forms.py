@@ -86,20 +86,6 @@ class AnnotForm(forms.Form):
     SentenceID = forms.IntegerField(widget = forms.HiddenInput)
     MutID = forms.IntegerField(widget = forms.HiddenInput)
     
-    def clean(self):
-
-        cleaned_data = self.cleaned_data
-
-        if cleaned_data['Bad_extraction'] or cleaned_data['No_mutation']:
-            return cleaned_data
-        
-        if cleaned_data['Human_gene'] is None and cleaned_data['HIV_gene'] is None:
-            raise forms.ValidationError('You must specify at least ONE protein')
-
-        if cleaned_data['Human_gene'] and cleaned_data['HIV_gene']:
-            raise forms.ValidationError('You can only specify ONE protein')
-
-        return cleaned_data
 
 
 
