@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from DistAnnot.Interaction.models import Mutation, InteractionEffect, Gene, EffectType
+from DistAnnot.Interaction.models import Mutation, InteractionEffect, Gene, EffectType, GeneAnnotation
 
 # Create your models here.
 class MutationAnnot(models.Model):
@@ -20,3 +20,8 @@ class InteractionEffectAnnot(models.Model):
 
     def update_link(self):
         self.InteractionEffect.Gene = self.EffectChosen
+
+class GeneAnnot(models.Model):
+
+    Annotation = models.ForeignKey(GeneAnnotation)
+    User = models.ForeignKey(User)
