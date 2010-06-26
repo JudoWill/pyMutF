@@ -61,4 +61,7 @@ class Article(models.Model):
     PMID = models.IntegerField()
     PMCID = models.CharField(max_length = 20, blank=True, null = True,
                              default = None)
+    PubMedXML = models.XMLField(null = True, default = None)
+    PMCXML = models.XMLField(null = True, default = None)
+    HasMut = models.NullBooleanField(default = None)
     
