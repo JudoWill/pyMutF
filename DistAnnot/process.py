@@ -17,29 +17,6 @@ import django.db.transaction
 #settings.configure(default_settings = DistAnnot.settings)
 from Interaction.models import *
 
-def GetXMLData(pmid, cachedir, timed_sem, db='pubmed', use_cache=True):
-    """Get an XML document either from the cache-directory or download it from Pubmed"""
-
-    f = os.path.join(cachedir, pmid + '.xml')
-    if os.path.exists(f) and use_cache:
-        return open(f).read()
-    else:
-        with timed_sem:
-            out = GetXML([pmid], db=db)
-        if len(out) < 10:
-            return False
-        try:
-            with open(f, 'w') as handle:
-                tree = BeautifulStoneSoup(out)
-                if tree is not None:
-                    handle.write(tree.prettyify())
-                else:
-                    return False
-            return out
-        except TypeError:
-            print 'bad getting with %s' % pmid
-            return False
-
 class TimedSemaphore():
     def __init__(self, timer, total):
         self.sem = Semaphore(total)
@@ -96,12 +73,13 @@ def AddArticleToDB(ParGen, MutFinder, article, interaction):
             
             return ' '.join(sent_list[ind-1:ind+1])
 
-
+    article.HasMut = False
     for par, parnum in izip(ParGen, count(0)):
         sent_list = list(sent_tokenize(par))
 
         for sent, sentnum in izip(sent_list, count(0)):
             for mut, loc in MutFinder(par).items():
+                article.HasMut = True
                 obj, isnew = Sentence.objects.get_or_create(Article = article,
                                                 ParNum = parnum,
                                                 SentNum = sentnum,
@@ -112,25 +90,22 @@ def AddArticleToDB(ParGen, MutFinder, article, interaction):
                 if not qset.exists() and mut is not None and isnew:
                     mut_obj = Mutation.objects.create(Mut = mut)
                     obj.Mutation.add(mut_obj)
-
+    article.save()
 
 def main():
-    cachedir = os.sep + os.path.join('home', 'will', 'pyMutF',
-                                     'cachedata') + os.sep
-    cachedir = os.sep + os.path.join('Users', 'will', 'pyMutF', 'cachedata') + os.sep
 
     with open('hiv_interactions') as handle:
         inter_list = list(csv.DictReader(handle, delimiter='\t'))
 
     print 'Adding Genes'
-    AddGenesToDB(inter_list)
+    #AddGenesToDB(inter_list)
     
     print 'Adding ExtraNames'
-    AddGeneNames('gene_info_human')
+    #AddGeneNames('gene_info_human')
 
 
 
-    pmid_pmc = {}
+    pmid_pmc = defaultdict(lambda : None)
     with open('PMC-ids.csv') as handle:
         for row in csv.DictReader(handle):
             pmid_pmc[row['PMID']] = row['PMCID']
@@ -150,30 +125,23 @@ def main():
                                                          InteractionType = r)
 
         for pmid in row['PubMed-ID'].split(','):
-            article, isnew = Article.objects.get_or_create(PMID = int(pmid))
-            if not Sentence.objects.filter(Interactions = inter,
-                                           Article = article).exists():
-
-
-                print 'retrieving %s' % pmid
-                if pmid in pmid_pmc:
-                    print 'getting PMC'
-                    article.PMCID = pmid_pmc[pmid]
-                    article.save()
-                    xmldata = GetXMLData(pmid_pmc[pmid], cachedir, EUtilsSem,
-                                         db='pmc')
-                    if xmldata:
-                        pargen = ExtractPMCPar(xmldata)
-                    else:
-                        continue
-                else:
-                    xmldata = GetXMLData(pmid, cachedir, EUtilsSem)
-                    if xmldata:
-                        pargen = ExtractPubPar(xmldata)
-                    else:
-                        continue
-
-                AddArticleToDB(pargen, mutFinder, article, inter)
+            article, isnew = Article.objects.get_or_create(PMID = int(pmid),
+                                                    PMCID = pmid_pmc[pmid])
+            if article.HasMut is None or article.HasMut:
+                xml = None
+                pargen = None
+                print 'Processing: %s' % pmid
+                if article.PMCID is not None:
+                    xml = article.GetPMCXML(cache_only = True)
+                    if xml:
+                        pargen = ExtractPMCPar(xml)
+                    
+                elif article.PMID is not None:
+                    xml = article.GetPubMedXML(cache_only = True)
+                    if xml:
+                        pargen = ExtractPubPar(xml)
+                if pargen:
+                    AddArticleToDB(pargen, mutFinder, article, inter)
             else:
                 print 'Aldready wrote: %s'  % pmid
 

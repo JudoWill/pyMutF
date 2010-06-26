@@ -1,5 +1,5 @@
 from django.db import models
-from PubMedUtils import GetXML
+from DistAnnot.PubmedUtils import GetXML
 from BeautifulSoup import BeautifulStoneSoup 
 
 # Create your models here.
@@ -68,7 +68,7 @@ class Article(models.Model):
     HasMut = models.NullBooleanField(default = None)
 
     def GetPubMedXML(self, cache_only = False):
-		if self.PubMedXML is None and not cache_only:
+        if self.PubMedXML is None and not cache_only:
             try:
                 temp = GetXML([str(self.PMID)])
             except:
