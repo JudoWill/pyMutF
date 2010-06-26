@@ -78,7 +78,7 @@ class Article(models.Model):
 
     def GetPMCXML(self):
         try:
-            temp = GetXML([str(self.PMID)], db = 'pmc')
+            temp = GetXML([str(self.PMCID)], db = 'pmc')
         except:
             return
         soup = BeautifulStoneSoup(temp)
