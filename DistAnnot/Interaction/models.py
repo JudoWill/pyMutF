@@ -74,14 +74,16 @@ class Article(models.Model):
             return
         soup = BeautifulStoneSoup(temp)
         self.PubMedXML = temp.prettyify()
-        
-    def GetPubMedXML(self):
+        return self.PubMedXML
+
+    def GetPMCXML(self):
         try:
-            temp = GetXML([str(self.PMID)])
+            temp = GetXML([str(self.PMID)], db = 'pmc')
         except:
             return
         soup = BeautifulStoneSoup(temp)
-        self.PubMedXML = temp.prettyify()   
+        self.PMCXML = temp.prettyify()
+        return self.PMCXML
 
 
 
