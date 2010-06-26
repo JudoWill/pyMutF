@@ -1,4 +1,6 @@
 from django.db import models
+from PubMedUtils import GetXML
+from BeautifulSoup import BeautifulStoneSoup 
 
 # Create your models here.
 class Sentence(models.Model):
@@ -64,4 +66,24 @@ class Article(models.Model):
     PubMedXML = models.XMLField(null = True, default = None)
     PMCXML = models.XMLField(null = True, default = None)
     HasMut = models.NullBooleanField(default = None)
+
+    def GetPubMedXML(self):
+        try:
+            temp = GetXML([str(self.PMID)])
+        except:
+            return
+        soup = BeautifulStoneSoup(temp)
+        self.PubMedXML = temp.prettyify()
+        
+    def GetPubMedXML(self):
+        try:
+            temp = GetXML([str(self.PMID)])
+        except:
+            return
+        soup = BeautifulStoneSoup(temp)
+        self.PubMedXML = temp.prettyify()   
+
+
+
+
     
