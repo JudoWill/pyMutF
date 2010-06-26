@@ -5,6 +5,7 @@ from PubmedUtils import *
 from threading import Semaphore, Timer
 from BeautifulSoup import BeautifulStoneSoup
 from mutation_finder import *
+from collections import defaultdict
 
 from nltk.tokenize import sent_tokenize
 from itertools import count, izip
@@ -14,7 +15,7 @@ import django.db.transaction
 #import DistAnnot.settings
 
 #settings.configure(default_settings = DistAnnot.settings)
-from Interaction.models import Gene, Sentence, Interaction, InteractionType, Mutation, Article
+from Interaction.models import *
 
 def GetXMLData(pmid, cachedir, timed_sem, db='pubmed', use_cache=True):
     """Get an XML document either from the cache-directory or download it from Pubmed"""
@@ -70,6 +71,19 @@ def AddGenesToDB(INTER_LIST):
         Gene.objects.get_or_create(Entrez = int(row['Gene-ID-2']), defaults = t)
 
 @django.db.transaction.commit_on_success
+def AddGeneNames(Fname):
+    
+    namedict = defaultdict(list)
+    with open(Fname) as handle:
+        for row in csv.DictReader(handle, delimiter = '\t'):
+            namedict[int(row['GeneID'])].append(row['Symbol'])
+    for gene in Gene.objects.all():
+        for name in namedict[gene.Entrez]:
+            ex, isnew = ExtraGeneName.objects.get_or_create(Name = name)
+            gene.ExtraNames.add(ex)
+            
+
+@django.db.transaction.commit_on_success
 def AddArticleToDB(ParGen, MutFinder, article, interaction):
     """Add sentences into the database"""
 
@@ -87,12 +101,12 @@ def AddArticleToDB(ParGen, MutFinder, article, interaction):
         sent_list = list(sent_tokenize(par))
 
         for sent, sentnum in izip(sent_list, count(0)):
-            for mut, loc in mutFinder(par).items():
+            for mut, loc in MutFinder(par).items():
                 obj, isnew = Sentence.objects.get_or_create(Article = article,
                                                 ParNum = parnum,
                                                 SentNum = sentnum,
-                                                Interactions = interaction,
                                                 defaults = {'Text':JoinSent(sent_list, sentnum)})
+                obj.Interactions.add(interaction)
 
                 qset = obj.Mutation.filter(Mut = mut)
                 if not qset.exists() and mut is not None and isnew:
@@ -100,21 +114,19 @@ def AddArticleToDB(ParGen, MutFinder, article, interaction):
                     obj.Mutation.add(mut_obj)
 
 
-
-
-
-
-
-if __name__ == '__main__':
+def main():
     cachedir = os.sep + os.path.join('home', 'will', 'pyMutF',
                                      'cachedata') + os.sep
+    cachedir = os.sep + os.path.join('Users', 'will', 'pyMutF', 'cachedata') + os.sep
 
     with open('hiv_interactions') as handle:
         inter_list = list(csv.DictReader(handle, delimiter='\t'))
 
     print 'Adding Genes'
     AddGenesToDB(inter_list)
-
+    
+    print 'Adding ExtraNames'
+    AddGeneNames('gene_info_human')
 
 
 
@@ -168,7 +180,8 @@ if __name__ == '__main__':
 
 
 
-
+if __name__ == '__main__':
+    main()
 
 
 
