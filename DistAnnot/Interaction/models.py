@@ -68,21 +68,23 @@ class Article(models.Model):
     HasMut = models.NullBooleanField(default = None)
 
     def GetPubMedXML(self):
-        try:
-            temp = GetXML([str(self.PMID)])
-        except:
-            return
-        soup = BeautifulStoneSoup(temp)
-        self.PubMedXML = soup.prettyify()
+        if self.PubMedXML is None:
+            try:
+                temp = GetXML([str(self.PMID)])
+            except:
+                return
+            soup = BeautifulStoneSoup(temp)
+            self.PubMedXML = soup.prettyify()
         return self.PubMedXML
 
     def GetPMCXML(self):
-        try:
-            temp = GetXML([str(self.PMCID)], db = 'pmc')
-        except:
-            return
-        soup = BeautifulStoneSoup(temp)
-        self.PMCXML = soup.prettyify()
+        if self.PMCXML is None:
+            try:
+                temp = GetXML([str(self.PMCID)], db = 'pmc')
+            except:
+                return
+            soup = BeautifulStoneSoup(temp)
+            self.PMCXML = soup.prettyify()
         return self.PMCXML
 
 
