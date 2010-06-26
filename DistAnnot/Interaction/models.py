@@ -67,8 +67,8 @@ class Article(models.Model):
     PMCXML = models.XMLField(null = True, default = None)
     HasMut = models.NullBooleanField(default = None)
 
-    def GetPubMedXML(self):
-        if self.PubMedXML is None:
+    def GetPubMedXML(self, cache_only = False):
+		if self.PubMedXML is None and not cache_only:
             try:
                 temp = GetXML([str(self.PMID)])
             except:
@@ -77,8 +77,8 @@ class Article(models.Model):
             self.PubMedXML = soup.prettyify()
         return self.PubMedXML
 
-    def GetPMCXML(self):
-        if self.PMCXML is None:
+    def GetPMCXML(self, cache_only = False):
+        if self.PMCXML is None and not cache_only:
             try:
                 temp = GetXML([str(self.PMCID)], db = 'pmc')
             except:
