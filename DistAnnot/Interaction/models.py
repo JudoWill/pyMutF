@@ -73,7 +73,7 @@ class Article(models.Model):
         except:
             return
         soup = BeautifulStoneSoup(temp)
-        self.PubMedXML = temp.prettyify()
+        self.PubMedXML = soup.prettyify()
         return self.PubMedXML
 
     def GetPMCXML(self):
@@ -82,7 +82,7 @@ class Article(models.Model):
         except:
             return
         soup = BeautifulStoneSoup(temp)
-        self.PMCXML = temp.prettyify()
+        self.PMCXML = soup.prettyify()
         return self.PMCXML
 
 
