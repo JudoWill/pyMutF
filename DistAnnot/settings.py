@@ -99,6 +99,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'Annot',
     'Interaction',
+    'Queries',
     # Uncomment the next line to enable the admin:
      'django.contrib.admin',
     'south'
