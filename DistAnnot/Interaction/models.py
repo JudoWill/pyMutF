@@ -16,8 +16,8 @@ class Sentence(models.Model):
 
     def __unicode__(self):
         
-        return '<Sentence:%d:%d:%d>' % (self.Article.PMID, self.ParNum, 
-                                        self.SentNum)
+        return '<Sentence:%s:%s:%s>' % (str(self.Article.PMID), str(self.ParNum),
+                                        str(self.SentNum))
 
 class Interaction(models.Model):
 
@@ -59,7 +59,7 @@ class Gene(models.Model):
 
     def __unicode__(self):
 
-        return '<Gene:%d:%s>' % (self.Entrez, self.Name)
+        return '<Gene:%s:%s>' % (str(self.Entrez), self.Name)
 
     def to_query(self):
 
