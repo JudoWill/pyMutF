@@ -75,15 +75,16 @@ def AddArticleToDB(ParGen, MutFinder, article, interaction):
 
     article.HasMut = False
     for par, parnum in izip(ParGen, count(0)):
-        sent_list = list(sent_tokenize(par))
+        sent_list = ['']+list(sent_tokenize(par))+['']
 
-        for sent, sentnum in izip(sent_list, count(0)):
-            for mut, loc in MutFinder(par).items():
+        for sentnum, sent in enumerate(sent_list):
+            for mut, loc in MutFinder(sent).items():
                 article.HasMut = True
+                text = ' '.join(sent_list[sentnum-1:sentnum+1])
                 obj, isnew = Sentence.objects.get_or_create(Article = article,
                                                 ParNum = parnum,
                                                 SentNum = sentnum,
-                                                defaults = {'Text':JoinSent(sent_list, sentnum)})
+                                                defaults = {'Text':text})
                 obj.Interactions.add(interaction)
 
                 qset = obj.Mutation.filter(Mut = mut)
