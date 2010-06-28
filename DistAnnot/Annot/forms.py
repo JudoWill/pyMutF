@@ -7,12 +7,12 @@ from DistAnnot.Annot.widgets import *
 
 class AnnotForm(forms.Form):
 
-    Bad_extraction = forms.BooleanField(required = False,
+    Bad_extraction = forms.BooleanField(required = False, label = 'Bad Extraction?',
                                         help_text = 'Check this box if the text displayed is just jibberish')
-    No_mutation = forms.BooleanField(required = False,
+    No_mutation = forms.BooleanField(required = False, label = 'No Mutation mentioned?',
                                      help_text = 'Check this box if there are no mentions of a mutation in this text')
-    MentionedGenes = MultiChoiceGeneField(Gene.objects.all(), required = False)
-    MutatedGene = ChoiceGeneField(Gene.objects.all(), required = False)
+    MentionedGenes = MultiChoiceGeneField(Gene.objects.all(), required = False, label = 'Genes Mentioned')
+    MutatedGene = ChoiceGeneField(Gene.objects.all(), required = False, label = 'Mutated Gene')
     SentenceID = forms.IntegerField(widget = forms.HiddenInput)
     MutID = forms.IntegerField(widget = forms.HiddenInput)
     
@@ -21,5 +21,5 @@ class InteractionEffectForm(forms.Form):
     
     id = forms.IntegerField(widget = forms.HiddenInput)
     EffectChoice = forms.ModelChoiceField(queryset = EffectType.objects.all(), 
-                                            empty_label="No Effect")
-    EffectFreeText = forms.CharField(max_length = 256)
+                                            empty_label="No Effect", label = 'Effect on the Interaction')
+    EffectFreeText = forms.CharField(widget = forms.Textarea, max_length = 256, label = 'Free Text of effect on the Interaction')
