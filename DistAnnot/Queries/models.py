@@ -1,10 +1,13 @@
 from django.db import models
 from DistAnnot.Interaction.models import Article
+from PubmedUtils import SearchPUBMED
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from itertools import product
 
 # Create your models here.
+from DistAnnot.PubmedUtils import SearchPUBMED
+
 class QueryRule(models.Model):
 
     Slug = models.SlugField(max_length = 256)
@@ -67,6 +70,12 @@ class Query(models.Model):
         return '<Query:%s>' % self.QueryText
 
 
-
+    def DoQuery(self, USE_RECENT = True):
+        """Searches the Pubmed interface and returns PMIDS for all of the retrieved article"""
+        if USE_RECENT:
+            return SearchPUBMED(self.QueryText, recent_date = self.LastChecked)
+        else:
+            return SearchPUBMED(self.QueryText, recent_date = None)
+        
 
 
