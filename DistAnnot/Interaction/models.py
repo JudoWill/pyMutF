@@ -33,6 +33,7 @@ class Interaction(models.Model):
                                             str(self.HumanGene),
                                             str(self.InteractionType))
 
+
 class Mutation(models.Model):
 
     Mut = models.CharField(max_length = 20)
@@ -56,18 +57,41 @@ class Gene(models.Model):
     Entrez = models.IntegerField()
     ExtraNames = models.ManyToManyField('ExtraGeneName')
 
+    def __unicode__(self):
+
+        return '<Gene:%d:%s>' % (self.Entrez, self.Name)
+
+    def to_query(self):
+
+        return self.Name
+
 class ExtraGeneName(models.Model):
     
     Name = models.CharField(max_length = 256)
+
+    def __unicode__(self):
+        return self.Name
+
+    def to_query(self):
+
+        return self.Name
 
 class GeneAnnotation(models.Model):
     
     Sentence = models.ForeignKey('Sentence')
     Gene = models.ForeignKey('Gene')
 
+    def __unicode__(self):
+
+        return '<Annotation:%s:%s>' % (str(self.Sentence), str(self.Gene))
+
 class InteractionType(models.Model):
 
     Type = models.CharField(max_length = 256)
+
+    def __unicode__(self):
+
+        return '<InteractionType:%s>' % self.Type
 
 class EffectType(models.Model):
     Slug = models.SlugField(max_length = 256)
@@ -81,6 +105,10 @@ class Article(models.Model):
     PubMedXML = models.XMLField(null = True, default = None)
     PMCXML = models.XMLField(null = True, default = None)
     HasMut = models.NullBooleanField(default = None)
+
+    def __unicode__(self):
+        
+        return '<Article:%d>' % self.PMID
 
     def GetPubMedXML(self, cache_only = False):
         if self.PubMedXML is None and not cache_only:
