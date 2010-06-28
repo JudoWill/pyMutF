@@ -14,6 +14,11 @@ class Sentence(models.Model):
     Mutation = models.ManyToManyField('Mutation')
     Article = models.ForeignKey('Article', null = True, default = None)
 
+    def __unicode__(self):
+        
+        return '<Sentence:%d:%d:%d>' % (self.Article.PMID, self.ParNum, 
+                                        self.SentNum)
+
 class Interaction(models.Model):
 
     HIVGene = models.ForeignKey('Gene', related_name = 'HIVPartner',
@@ -22,11 +27,21 @@ class Interaction(models.Model):
                                 limit_choices_to = {'Organism__eq':'Human'})
     InteractionType = models.ForeignKey('InteractionType')
 
+    def __unicode__(self):
+        
+        return '<Interaction:%s:%s:%s>' % (str(self.HIVGene),
+                                            str(self.HumanGene),
+                                            str(self.InteractionType))
+
 class Mutation(models.Model):
 
     Mut = models.CharField(max_length = 20)
     Gene = models.ForeignKey('Gene', blank = True, null = True)
     Interaction = models.ManyToManyField(Interaction, through = 'InteractionEffect')
+
+    def __unicode__(self):
+        
+        return '<Mutation:%s:%s>' % (self.Mut, str(self.Gene))
 
 class InteractionEffect(models.Model):
 
@@ -71,20 +86,21 @@ class Article(models.Model):
         if self.PubMedXML is None and not cache_only:
             try:
                 temp = GetXML([str(self.PMID)])
+                soup = BeautifulStoneSoup(temp)
+                self.PubMedXML = soup.prettyify()
             except:
-                return
-            soup = BeautifulStoneSoup(temp)
-            self.PubMedXML = soup.prettyify()
+                pass
+            
         return self.PubMedXML
 
     def GetPMCXML(self, cache_only = False):
         if self.PMCXML is None and not cache_only:
             try:
                 temp = GetXML([str(self.PMCID)], db = 'pmc')
+                soup = BeautifulStoneSoup(temp)
+                self.PMCXML = soup.prettyify()
             except:
-                return
-            soup = BeautifulStoneSoup(temp)
-            self.PMCXML = soup.prettyify()
+                pass
         return self.PMCXML
 
 

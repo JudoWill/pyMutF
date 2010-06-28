@@ -22,9 +22,9 @@ def LabelMutation(request, SentID = None, MutID = None):
     if request.method == 'POST':
         annot_form = AnnotForm(request.POST, prefix = 'annot')
         effect_form = InteractionEffectFormset(request.POST, prefix = 'effect')
-        sentence = Sentence.objects.get(id=int(request.POST['SentenceID']))
-        mut = Mutation.objects.get(id=int(request.POST['MutID']))
-        if annot_form.is_valid():
+        sentence = Sentence.objects.get(id=int(request.POST['annot-SentenceID']))
+        mut = Mutation.objects.get(id=int(request.POST['annot-MutID']))
+        if annot_form.is_valid() and effect_form.is_valid():
             if not annot_form.cleaned_data['Bad_extraction']:
                 if annot_form.cleaned_data['MutatedGene']:
                     mut_annot = MutationAnnot(User = request.user, Mutation = mut,
@@ -37,7 +37,7 @@ def LabelMutation(request, SentID = None, MutID = None):
                 for gene in picked_genes.exclude(id__in = sentence.Genes.all()):
                     obj = GeneAnnotation(Sentence = sentence, Gene = gene)
                     obj.save()
-                    sentence.Genes.add()
+                    sentence.Genes.add(obj)
             else:
                 sentence.delete()
                 mut.delete()

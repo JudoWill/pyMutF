@@ -127,21 +127,34 @@ def main():
         for pmid in row['PubMed-ID'].split(','):
             article, isnew = Article.objects.get_or_create(PMID = int(pmid),
                                                     PMCID = pmid_pmc[pmid])
-            if article.HasMut is None or article.HasMut:
+            
+            if article.HasMut is None:
+                article.HasMut = False
+                article.save()
                 xml = None
                 pargen = None
                 print 'Processing: %s' % pmid
-                if article.PMCID is not None:
-                    xml = article.GetPMCXML(cache_only = True)
-                    if xml:
-                        pargen = ExtractPMCPar(xml)
+                try:
+                    if article.PMCID is not None:
+                        xml = article.GetPMCXML()
+                        if xml:
+                            pargen = ExtractPMCPar(xml)
                     
-                elif article.PMID is not None:
-                    xml = article.GetPubMedXML(cache_only = True)
-                    if xml:
-                        pargen = ExtractPubPar(xml)
-                if pargen:
-                    AddArticleToDB(pargen, mutFinder, article, inter)
+                    elif article.PMID is not None:
+                        xml = article.GetPubMedXML()
+                        if xml:
+                            pargen = ExtractPubPar(xml)
+                    if pargen:
+                        AddArticleToDB(pargen, mutFinder, article, inter)
+                except:
+                    print 'got error: ', article.PMID
+                    article.HasMut = None
+                    article.save()
+                    continue
+            elif article.HasMut:
+                print 'Already processed'
+                for sent in Sentence.objects.filter(Article = article):
+                    sent.Interactions.add(inter)
             else:
                 print 'Aldready wrote: %s'  % pmid
 
