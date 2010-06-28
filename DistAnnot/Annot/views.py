@@ -17,7 +17,7 @@ from forms import AnnotForm, InteractionEffectForm
 def LabelMutation(request, SentID = None, MutID = None):
     """A view to display the Mutation and sentence for annotation"""
     
-    InteractionEffectFormset = formset_factory(InteractionEffectForm, extra = 1)
+    InteractionEffectFormset = formset_factory(InteractionEffectForm, extra = 0)
     
     if request.method == 'POST':
         annot_form = AnnotForm(request.POST, prefix = 'annot')
@@ -57,15 +57,17 @@ def LabelMutation(request, SentID = None, MutID = None):
 
         annot_form = AnnotForm(initial = {'SentenceID':sentence.id,
                                     'MutID':mut.id}, prefix = 'annot')
-        inters = sentence.Interactions.all().values('id', 'HIVGene', 'HumanGene',
-                                                    'InteractionType')
-        effect_form = InteractionEffectFormset(prefix = 'effect',
-                            initial=inters)
-
+        inters = sentence.Interactions.all().values('id')
+        effect_form = InteractionEffectFormset(prefix = 'effect', 
+                                                initial = inters)
+        zipped_inter_forms = zip(effect_form.forms, sentence.Interactions.all())
+        
     out_dict = {'MutAnnotForm':annot_form,
                 'EffectForm':effect_form,
                 'sentence': sentence, 
-                'mut':mut}
+                'mut':mut,
+                'interactions':inters,
+                'zipped_forms': zipped_inter_forms}
 
     return render_to_response("Annot/LabelMutation.html", out_dict,
                               context_instance = RequestContext(request))

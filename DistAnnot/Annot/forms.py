@@ -20,9 +20,6 @@ class AnnotForm(forms.Form):
 class InteractionEffectForm(forms.Form):
     
     id = forms.IntegerField(widget = forms.HiddenInput)
-    HIVGene = ChoiceGeneField(Gene.objects.all())
-    InteractionType = forms.ModelChoiceField(queryset = InteractionType.objects.all())
-    HumanGene = ChoiceGeneField(Gene.objects.all())
-    EffectChoide = forms.ModelChoiceField(queryset = EffectType.objects.all(), 
+    EffectChoice = forms.ModelChoiceField(queryset = EffectType.objects.all(), 
                                             empty_label="No Effect")
     EffectFreeText = forms.CharField(max_length = 256)
