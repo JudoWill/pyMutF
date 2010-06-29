@@ -20,6 +20,7 @@ class AnnotForm(forms.Form):
 class InteractionEffectForm(forms.Form):
     
     id = forms.IntegerField(widget = forms.HiddenInput)
-    EffectChoice = forms.ModelChoiceField(queryset = EffectType.objects.all(), 
+    EffectChoice = forms.ModelChoiceField(queryset = EffectType.objects.all(), required = False,
                                             empty_label="No Effect", label = 'Effect on the Interaction')
-    EffectFreeText = forms.CharField(widget = forms.Textarea, max_length = 256, label = 'Free Text of effect on the Interaction')
+    EffectFreeText = forms.CharField(widget = forms.Textarea, max_length = 256, required = False,
+                                     label = 'Free Text of effect on the Interaction')

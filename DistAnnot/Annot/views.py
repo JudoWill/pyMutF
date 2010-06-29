@@ -9,6 +9,7 @@ from django.shortcuts import *
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
+from django.template.defaultfilters import slugify
 
 from forms import AnnotForm, InteractionEffectForm
 
@@ -31,19 +32,62 @@ def LabelMutation(request, SentID = None, MutID = None):
                                           GeneChosen = annot_form.cleaned_data['MutatedGene'])
                     mut_annot.save()
                     mut_annot.update_link()
+                    #Send a message
+                    request.user.message_set.create(message = 'Sucessfully attributed %s to %s' % (str(mut), str(mut_annot.GeneChosen)))
                 else:
+                    #Send a message
+                    request.user.message_set.create(message = 'Sucessfully deleted %s' % str(mut))
+
                     mut.delete()
+
+
                 picked_genes = annot_form.cleaned_data['MentionedGenes']
                 for gene in picked_genes.exclude(id__in = sentence.Genes.all()):
                     obj = GeneAnnotation(Sentence = sentence, Gene = gene)
                     obj.save()
-                    sentence.Genes.add(obj)
+                    #sentence.Genes.add(obj)
+                    GeneAnnot(User = request.user, Annotation = obj).save()
+
+                    #Send a message
+                    request.user.message_set.create(message = 'Sucessfully added %s ' % str(gene))
+
+                for eform in effect_form.forms:
+                    inter = Interaction.objects.get(id = eform.cleaned_data['id'])
+                    if len(eform.cleaned_data['EffectFreeText']) > 0:
+                        txt = eform.cleaned_data['EffectFreeText']
+                        effect, isnew = InteractionEffect.objects.get_or_create(Slug = slugify(txt),
+                                                                             Description = txt)
+                        if isnew:
+                            #Send a message
+                            request.user.message_set.create(message = 'Sucessfully created %s ' % str(effect.Slug))
+
+                    elif not eform.cleaned_data['EffectChoice'] is None:
+                        effect = eform.cleaned_data['EffectChoice']
+                    else:
+                        continue
+
+                    ie, isnew = InteractionEffect.objects.get_or_create(Interaction = inter,
+                                                                        Mutation = mut,
+                                                                        EffectType = effect)
+                    if isnew:
+                        InteractionEffectAnnot(User = request.user, InteractionEffect = ie,
+                                               EffectChosen = effect).save()
+                        #Send a message
+                        txt = 'Sucessfully annotated intection effect %s to %s' % (str(effect.Slug), str(mut))
+                        request.user.message_set.create(message = txt)
+
+
+
+
             else:
+                request.user.message_set.create(message = 'Sucessfully deleted the jiberish sentence.')
                 sentence.delete()
                 mut.delete()
 
             return HttpResponseRedirect(reverse('LabelMutation'))
-
+        else:
+            inters = sentence.Article.Interactions.all().values('id')
+            zipped_inter_forms = zip(effect_form.forms, sentence.Article.Interactions.all())
 
     else:
         if SentID:
@@ -57,17 +101,21 @@ def LabelMutation(request, SentID = None, MutID = None):
 
         annot_form = AnnotForm(initial = {'SentenceID':sentence.id,
                                     'MutID':mut.id}, prefix = 'annot')
-        inters = sentence.Interactions.all().values('id')
+
+        inters = sentence.Article.Interactions.all().values('id')
         effect_form = InteractionEffectFormset(prefix = 'effect', 
                                                 initial = inters)
-        zipped_inter_forms = zip(effect_form.forms, sentence.Interactions.all())
-        
+        zipped_inter_forms = zip(effect_form.forms, sentence.Article.Interactions.all())
+
+    article = sentence.Article
     out_dict = {'MutAnnotForm':annot_form,
                 'EffectForm':effect_form,
                 'sentence': sentence, 
                 'mut':mut,
                 'interactions':inters,
-                'zipped_forms': zipped_inter_forms}
+                'zipped_forms': zipped_inter_forms,
+                'Article':article,
+                'PrevActions':request.user.get_and_delete_messages()}
 
     return render_to_response("Annot/LabelMutation.html", out_dict,
                               context_instance = RequestContext(request))

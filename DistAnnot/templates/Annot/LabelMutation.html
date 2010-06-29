@@ -8,6 +8,16 @@
 
 {% block content %}
 
+{% if PrevActions %}
+<h4>Previous Actions!!</h4>
+<ul>
+{% for action in PrevActions %}
+<li>{{ action }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+
 <h4>Instructions</h4>
 <p>Use the form below to annotate the text that has been provided.  Annotate <b>ALL GENES</b> in the text and then annotate the gene which has been mutated.
 In this case only annotate the mutation: <b>{{ mut.Mut }}</b></p>

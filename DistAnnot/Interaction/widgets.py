@@ -3,7 +3,7 @@ from DistAnnot.Interaction.models import Gene
 from DistAnnot.Annot.widgets import AutoCompleteTagInput, AutoCompleteTagInputLarge
 
 from operator import attrgetter
-
+from django.db.models.query_utils import Q
 
 
 class ChoiceGeneField(forms.ModelChoiceField):
@@ -20,6 +20,7 @@ class ChoiceGeneField(forms.ModelChoiceField):
     def to_python(self, value):
         if not value:
             return None
+        print value
         vparts = value.split(':')
         typ = vparts[0]
         ref = vparts[1].split(',')[0]        
@@ -44,12 +45,15 @@ class MultiChoiceGeneField(ChoiceGeneField):
     def to_python(self, value):
         if not value:
             return None
-        labels = map(lambda x: x.lstrip().rstrip(), value.split(','))
+
+        labels = map(lambda x: x.lstrip().rstrip(), value.split(','))[:-1]
         ids = []
+        print labels
         for label in labels:
             vparts = label.split(':')
+            print label
             typ = vparts[0]
-            ref = vparts[1].split(',')[0]
+            ref = vparts[1]
             Qgen = self.qresolve[typ]
             Qobj = Qgen(ref)
             ids.append(Gene.objects.get(Qobj).id)
