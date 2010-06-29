@@ -20,12 +20,12 @@ class QueryRule(models.Model):
 
     def YieldQueries(self):
         """Yields rendered queries based on the data provided"""
-        print 'before'
+        #print 'before'
         datatypes = self.Data.values_list('identifier', flat = True).distinct()
-        print 'yielding', datatypes, len(datatypes)
+        #print 'yielding', datatypes, len(datatypes)
         if len(datatypes) == 1:
             for data in self.Data.all():
-                yield self.render({datatypes[0]:data}), data
+                yield self.render({datatypes[0]:data}), (data,)
 
         qsets = []
         for dtype in datatypes:
@@ -38,8 +38,8 @@ class QueryRule(models.Model):
         """Renders a query based on the data passed"""
 
         render_dict = {}
-        print 'render', render_dict
-        print data_dict
+        #print 'render', render_dict
+        #print data_dict
         for key in data_dict:
             render_dict[key] = data_dict[key].content_object.to_query()
 
