@@ -9,10 +9,13 @@ from django.db.models.query_utils import Q
 class ChoiceGeneField(forms.ModelChoiceField):
     def __init__(self, queryset, *args, **kwargs):
         self.queryset = queryset
-        self.mapping = {'GN':attrgetter('Name'),
-                        'EN':attrgetter('Entrez')}
-        self.qresolve = {'GN': lambda x: Q(Name=x),
-                         'EN': lambda x: Q(Entrez=int(x))}
+        self.mapping = {    'GN':attrgetter('Name'),
+                            'EN':attrgetter('Entrez'),
+                            'ON':lambda x:list(x.ExtraNames.all())}
+        
+        self.qresolve = {   'GN': lambda x: Q(Name=x),
+                            'EN': lambda x: Q(Entrez=int(x)),
+                            'ON': lambda x: Q(ExtraNames__Name=x)}
         kwargs['widget'] = AutoCompleteTagInput(attrs = {'queryset':queryset,
                                                          'mapping':self.mapping})
         kwargs['queryset'] = queryset
@@ -34,10 +37,13 @@ class ChoiceGeneField(forms.ModelChoiceField):
 class MultiChoiceGeneField(ChoiceGeneField):
     def __init__(self, queryset, *args, **kwargs):
         self.queryset = queryset
-        self.mapping = {'GN':attrgetter('Name'),
-                        'EN':attrgetter('Entrez')}
-        self.qresolve = {'GN': lambda x: Q(Name=x),
-                         'EN': lambda x: Q(Entrez=int(x))}
+        self.mapping = {    'GN':attrgetter('Name'),
+                            'EN':attrgetter('Entrez'),
+                            'ON':lambda x:list(x.ExtraNames.all())}
+
+        self.qresolve = {   'GN': lambda x: Q(Name=x),
+                            'EN': lambda x: Q(Entrez=int(x)),
+                            'ON': lambda x: Q(ExtraNames__Name=x)}
         kwargs['widget'] = AutoCompleteTagInputLarge(attrs = {'queryset':queryset,
                                                          'mapping':self.mapping})
         kwargs['queryset'] = queryset

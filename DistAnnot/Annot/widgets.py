@@ -2,6 +2,23 @@ from django import forms
 from django.conf import settings
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
+from types import ListType
+
+
+def MakeList(mapping, qset):
+
+    tlist = []
+    for item in qset:
+        for key, fun in mapping.items():
+            val = fun(item)
+            if type(val) is ListType:
+                for v in val:
+                    tlist.append(key+':'+v.Name)
+            else:
+                tlist.append(key+':'+str(val))
+    return tlist
+
+
 
 
 class AutoCompleteTagInput(forms.TextInput):
@@ -22,10 +39,8 @@ class AutoCompleteTagInput(forms.TextInput):
 
         qset = self.attrs['queryset']
         mapping = self.attrs['mapping']
-        tag_items = []
-        for item in qset:
-            for key, fun in mapping.items():
-                tag_items.append(key+':'+str(fun(item)))
+        tag_items = MakeList(mapping, qset)
+
         tag_list = simplejson.dumps(tag_items,
                                     ensure_ascii=False)
         return output + mark_safe(u'''<script type="text/javascript">
@@ -60,10 +75,7 @@ class AutoCompleteTagInputLarge(forms.Textarea):
 
         qset = self.attrs['queryset']
         mapping = self.attrs['mapping']
-        tag_items = []
-        for item in qset:
-            for key, fun in mapping.items():
-                tag_items.append(key+':'+str(fun(item)))
+        tag_items = MakeList(mapping, qset)
         tag_list = simplejson.dumps(tag_items,
                                     ensure_ascii=False)
         return output + mark_safe(u'''<script type="text/javascript">
