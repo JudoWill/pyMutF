@@ -10,7 +10,6 @@ class Sentence(models.Model):
     PMID = models.IntegerField()
     ParNum = models.IntegerField(blank = True, default = None, null = True)
     SentNum = models.IntegerField(blank = True, default = None, null = True)
-    Interactions = models.ManyToManyField('Interaction')
     Genes = models.ManyToManyField('Gene', through = 'GeneAnnotation')
     Mutation = models.ManyToManyField('Mutation')
     Article = models.ForeignKey('Article', null = True, default = None)
