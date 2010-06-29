@@ -39,15 +39,20 @@ def CreateQueries(rule):
 
 @django.db.transaction.commit_on_success
 def DoQuery(rule, pmid_pmc, semaphore, MutFinder):
+    with semaphore:
+        pmids = rule.DoQuery()
+    print rule, len(pmids)
 
-    for pmid in rule.DoQuery():
+    for pmid in pmids:
+
         art, isnew = Article.objects.get_or_create(PMID = pmid,
                                                    PMCID = pmid_pmc[pmid])
         if isnew:
             rule.Articles.add(art)
             with semaphore:
                 pargen = GetParGen(art)
-            AddArticleToDB(pargen, MutFinder, art)
+            if pargen is not None:
+                AddArticleToDB(pargen, MutFinder, art)
 
 
 def GetParGen(article):
