@@ -1,6 +1,7 @@
 from django.db import models
 from DistAnnot.PubmedUtils import GetXML
-from BeautifulSoup import BeautifulStoneSoup 
+from BeautifulSoup import BeautifulStoneSoup
+from django.template.defaultfilters import slugify
 
 # Create your models here.
 class Sentence(models.Model):
@@ -16,7 +17,7 @@ class Sentence(models.Model):
 
     def __unicode__(self):
         
-        return '<Sentence:%s:%s:%s>' % (str(self.Article.PMID), str(self.ParNum),
+        return '%s:%s:%s' % (str(self.Article.PMID), str(self.ParNum),
                                         str(self.SentNum))
 
 class Interaction(models.Model):
@@ -29,9 +30,14 @@ class Interaction(models.Model):
 
     def __unicode__(self):
         
-        return '<Interaction:%s:%s:%s>' % (str(self.HIVGene),
-                                            str(self.HumanGene),
-                                            str(self.InteractionType))
+        return '%s:%s:%s' % (str(self.HIVGene),
+                            str(self.HumanGene),
+                            str(self.InteractionType))
+
+    def to_query(self):
+
+        return slugify('%s interacts %s' % (self.HIVGene.Name,
+                                                self.HumanGene.Name))
 
 
 class Mutation(models.Model):
@@ -42,7 +48,9 @@ class Mutation(models.Model):
 
     def __unicode__(self):
         
-        return '<Mutation:%s:%s>' % (self.Mut, str(self.Gene))
+        return '%s:%s' % (self.Mut, str(self.Gene))
+
+
 
 class InteractionEffect(models.Model):
 
@@ -59,7 +67,7 @@ class Gene(models.Model):
 
     def __unicode__(self):
 
-        return '<Gene:%s:%s>' % (str(self.Entrez), self.Name)
+        return '%s:%s' % (str(self.Entrez), self.Name)
 
     def to_query(self):
 
@@ -83,7 +91,7 @@ class GeneAnnotation(models.Model):
 
     def __unicode__(self):
 
-        return '<Annotation:%s:%s>' % (str(self.Sentence), str(self.Gene))
+        return '%s:%s' % (str(self.Sentence), str(self.Gene))
 
 class InteractionType(models.Model):
 
@@ -91,7 +99,7 @@ class InteractionType(models.Model):
 
     def __unicode__(self):
 
-        return '<InteractionType:%s>' % self.Type
+        return '%s' % self.Type
 
 class EffectType(models.Model):
     Slug = models.SlugField(max_length = 256)
@@ -108,7 +116,7 @@ class Article(models.Model):
 
     def __unicode__(self):
         
-        return '<Article:%d>' % self.PMID
+        return 'PMID:%d' % self.PMID
 
     def GetPubMedXML(self, cache_only = False):
         if self.PubMedXML is None and not cache_only:
