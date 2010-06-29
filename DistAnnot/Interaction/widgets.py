@@ -4,6 +4,7 @@ from DistAnnot.Annot.widgets import AutoCompleteTagInput, AutoCompleteTagInputLa
 
 from operator import attrgetter
 from django.db.models.query_utils import Q
+from django.core.exceptions import MultipleObjectsReturned
 
 
 class ChoiceGeneField(forms.ModelChoiceField):
@@ -29,7 +30,11 @@ class ChoiceGeneField(forms.ModelChoiceField):
         ref = vparts[1].split(',')[0]        
         Qgen = self.qresolve[typ]
         Qobj = Qgen(ref)
-        return Gene.objects.get(Qobj)
+        try:
+            obj = Gene.objects.get(Qobj)
+        except MultipleObjectsReturned:
+            obj = Gene.objects.filter(Qobj)[0]
+        return obj
     def validate(self, value):
         pass
 
@@ -62,5 +67,9 @@ class MultiChoiceGeneField(ChoiceGeneField):
             ref = vparts[1]
             Qgen = self.qresolve[typ]
             Qobj = Qgen(ref)
-            ids.append(Gene.objects.get(Qobj).id)
+            try:
+                obj = Gene.objects.get(Qobj)
+            except MultipleObjectsReturned:
+                obj = Gene.objects.filter(Qobj)[0]
+            ids.append(obj.id)
         return Gene.objects.filter(id__in = ids).distinct()
