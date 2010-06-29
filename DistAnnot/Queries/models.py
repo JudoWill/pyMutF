@@ -20,8 +20,9 @@ class QueryRule(models.Model):
 
     def YieldQueries(self):
         """Yields rendered queries based on the data provided"""
+        print 'before'
         datatypes = self.Data.values_list('identifier', flat = True).distinct()
-
+        print 'yielding', datatypes, len(datatypes)
         if len(datatypes) == 1:
             for data in self.Data.all():
                 yield self.render({datatypes[0]:data}), data
@@ -37,8 +38,10 @@ class QueryRule(models.Model):
         """Renders a query based on the data passed"""
 
         render_dict = {}
-        for key, item in data_dict.values():
-            render_dict[key] = item.content_object.to_query()
+        print 'render', render_dict
+        print data_dict
+        for key in data_dict:
+            render_dict[key] = data_dict[key].content_object.to_query()
 
         return self.QueryRule % render_dict
 
@@ -64,7 +67,7 @@ class Query(models.Model):
     DataObjects = models.ManyToManyField('Data')
     Articles = models.ManyToManyField(Article)
     DateAdded = models.DateField(auto_now_add = True)
-    LastChecked = models.DateTimeField()
+    LastChecked = models.DateTimeField(null = True, default = None)
 
     def __unicode__(self):
 
