@@ -64,7 +64,7 @@ class Query(models.Model):
     DataObjects = models.ManyToManyField('Data')
     Articles = models.ManyToManyField(Article)
     DateAdded = models.DateField(auto_now_add = True)
-    LastChecked = models.DateTimeField(auto_now = True)
+    LastChecked = models.DateTimeField()
 
     def __unicode__(self):
 
