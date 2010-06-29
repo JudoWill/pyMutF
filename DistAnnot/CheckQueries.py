@@ -38,11 +38,11 @@ def CreateQueries(rule):
                 query.DataObjects.add(data)
 
 @django.db.transaction.commit_on_success
-def DoQuery(rule, pmid_pmc, semaphore):
+def DoQuery(rule, pmid_pmc, semaphore, MutFinder):
 
     for pmid in rule.DoQuery():
         art, isnew = Article.objects.get_or_create(PMID = pmid,
-                                                   PMCID = pmid_pmc)
+                                                   PMCID = pmid_pmc[pmid])
         if isnew:
             rule.Articles.add(art)
             with semaphore:
@@ -119,7 +119,7 @@ def main():
 
 
 
-    mutFinder = mutation_finder_from_regex_filepath('regex.txt')
+    MutFinder = mutation_finder_from_regex_filepath('regex.txt')
     EUtilsSem = TimedSemaphore(2, 3)
 
     print 'Making Rules'
@@ -138,7 +138,7 @@ def main():
 
     print 'Doing actual queries'
     for query in Query.objects.all():
-        DoQuery(query, pmid_pmc, EUtilsSem)
+        DoQuery(query, pmid_pmc, EUtilsSem, MutFinder)
 
 if __name__ == '__main__':
     main()
