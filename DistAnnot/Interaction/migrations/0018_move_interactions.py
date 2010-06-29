@@ -34,7 +34,7 @@ class Migration(DataMigration):
             for sent in article.sentence_set.all():
                 sent_set = set(sent.Interactions.all())
                 for inter in inter_set-sent_set:
-                    sent.Interactions.add(int)
+                    sent.Interactions.add(inter)
 
 
 
