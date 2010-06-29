@@ -120,7 +120,8 @@ def main():
                       { 'Text':'HIV+mutation+%(human_gene)s',
                         'data': {'human_gene': Gene.objects.filter(Organism='HIV')},
                         'Slug': 'human-mutation-search',
-                        'ShouldLink':True}]
+                        'ShouldLink':True}
+                      ]
 
 
 

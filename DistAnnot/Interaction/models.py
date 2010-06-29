@@ -35,9 +35,9 @@ class Interaction(models.Model):
                             str(self.InteractionType))
 
     def to_query(self):
-
-        return slugify('%s interacts %s' % (self.HIVGene.Name,
-                                                self.HumanGene.Name))
+        temp = '%s interacts %s' % (self.HIVGene.Name,
+                                                self.HumanGene.Name)
+        return temp.replace(' ', '+')
 
 
 class Mutation(models.Model):
