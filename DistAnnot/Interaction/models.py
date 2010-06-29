@@ -113,6 +113,7 @@ class Article(models.Model):
     PubMedXML = models.XMLField(null = True, default = None)
     PMCXML = models.XMLField(null = True, default = None)
     HasMut = models.NullBooleanField(default = None)
+    Interactions = models.ManyToManyField(Interaction)
 
     def __unicode__(self):
         
