@@ -15,7 +15,7 @@ class Sentence(models.Model):
     Article = models.ForeignKey('Article', null = True, default = None)
 
     def __unicode__(self):
-        
+
         return '%s:%s:%s' % (str(self.Article.PMID), str(self.ParNum),
                                         str(self.SentNum))
 
@@ -106,7 +106,7 @@ class EffectType(models.Model):
 
 class Article(models.Model):
 
-    PMID = models.IntegerField()
+    PMID = models.IntegerField(null = True)
     PMCID = models.CharField(max_length = 20, blank=True, null = True,
                              default = None)
     PubMedXML = models.XMLField(null = True, default = None)
@@ -120,23 +120,22 @@ class Article(models.Model):
 
     def GetPubMedXML(self, cache_only = False):
         if self.PubMedXML is None and not cache_only:
-            try:
-                temp = GetXML([str(self.PMID)])
-                soup = BeautifulStoneSoup(temp)
-                self.PubMedXML = soup.prettyify()
-            except:
-                pass
+
+            temp = GetXML([str(self.PMID)])
+           
+            soup = BeautifulStoneSoup(temp)
+            self.PubMedXML = soup.prettify()
+
             
         return self.PubMedXML
 
     def GetPMCXML(self, cache_only = False):
         if self.PMCXML is None and not cache_only:
-            try:
-                temp = GetXML([str(self.PMCID)], db = 'pmc')
-                soup = BeautifulStoneSoup(temp)
-                self.PMCXML = soup.prettyify()
-            except:
-                pass
+
+            temp = GetXML([str(self.PMCID)], db = 'pmc')
+            soup = BeautifulStoneSoup(temp)
+            self.PMCXML = soup.prettify()
+
         return self.PMCXML
 
 
