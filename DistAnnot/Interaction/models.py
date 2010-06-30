@@ -7,7 +7,7 @@ from django.template.defaultfilters import slugify
 class Sentence(models.Model):
 
     Text = models.TextField()
-    PMID = models.IntegerField()
+    PMID = models.IntegerField(null = True)
     ParNum = models.IntegerField(blank = True, default = None, null = True)
     SentNum = models.IntegerField(blank = True, default = None, null = True)
     Genes = models.ManyToManyField('Gene', through = 'GeneAnnotation')
