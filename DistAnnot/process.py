@@ -10,6 +10,8 @@ from collections import defaultdict
 from nltk.tokenize import sent_tokenize
 from itertools import count, izip
 
+from django.core.exceptions import MultipleObjectsReturned
+
 import django.db.transaction
 #from django.conf import settings
 #import DistAnnot.settings
@@ -56,7 +58,10 @@ def AddGeneNames(Fname):
             namedict[int(row['GeneID'])].append(row['Symbol'])
     for gene in Gene.objects.all():
         for name in namedict[gene.Entrez]:
-            ex, isnew = ExtraGeneName.objects.get_or_create(Name = name)
+            try:
+                ex, isnew = ExtraGeneName.objects.get_or_create(Name = name)
+            except MultipleObjectsReturned:
+                continue
             gene.ExtraNames.add(ex)
             
 
@@ -79,13 +84,14 @@ def AddArticleToDB(ParGen, MutFinder, article, interaction):
 
         for sentnum, sent in enumerate(sent_list):
             for mut, loc in MutFinder(sent).items():
+                print 'Found Mut!!'
                 article.HasMut = True
                 text = ' '.join(sent_list[sentnum-1:sentnum+1])
                 obj, isnew = Sentence.objects.get_or_create(Article = article,
                                                 ParNum = parnum,
                                                 SentNum = sentnum,
                                                 defaults = {'Text':text})
-                obj.Interactions.add(interaction)
+                obj.Article.Interactions.add(interaction)
 
                 qset = obj.Mutation.filter(Mut = mut)
                 if not qset.exists() and mut is not None and isnew:
@@ -135,27 +141,26 @@ def main():
                 xml = None
                 pargen = None
                 print 'Processing: %s' % pmid
-                try:
-                    if article.PMCID is not None:
-                        xml = article.GetPMCXML()
-                        if xml:
-                            pargen = ExtractPMCPar(xml)
-                    
-                    elif article.PMID is not None:
-                        xml = article.GetPubMedXML()
-                        if xml:
-                            pargen = ExtractPubPar(xml)
-                    if pargen:
-                        AddArticleToDB(pargen, mutFinder, article, inter)
-                except:
-                    print 'got error: ', article.PMID
-                    article.HasMut = None
-                    article.save()
-                    continue
+                #try:
+                if article.PMCID is not None:
+                    xml = article.GetPMCXML()
+                    if xml:
+                        pargen = ExtractPMCPar(xml)
+
+                elif article.PMID is not None:
+                    xml = article.GetPubMedXML()
+                    if xml:
+                        pargen = ExtractPubPar(xml)
+                if pargen:
+                    AddArticleToDB(pargen, mutFinder, article, inter)
+                #except:
+                #    print 'got error: ', article.PMID
+                #    article.HasMut = None
+                #    article.save()
+                #    continue
             elif article.HasMut:
                 print 'Already processed'
-                for sent in Sentence.objects.filter(Article = article):
-                    sent.Interactions.add(inter)
+                article.Interactions.add(inter)
             else:
                 print 'Aldready wrote: %s'  % pmid
 
