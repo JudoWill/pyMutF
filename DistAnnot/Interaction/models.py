@@ -104,6 +104,10 @@ class EffectType(models.Model):
     Slug = models.SlugField(max_length = 256)
     Description = models.CharField(max_length = 256)
 
+    def __unicode__(self):
+        
+        return self.Slug
+
 class Article(models.Model):
 
     PMID = models.IntegerField(null = True)
