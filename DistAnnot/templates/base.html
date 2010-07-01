@@ -46,6 +46,7 @@
 			<p>Not logged in. Go <a href="{% url login %}">here</a> to login.<p>
 			{% endif %}
 			{% endblock %}
+			<p><a href="{% url admin:index %}">Admin Site</a></p>
         </div>
         <div class="span-24 last">
             {% block footer %}
