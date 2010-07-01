@@ -1,0 +1,16 @@
+- fields: {Description: inhibits, Slug: inhibits}
+  model: Interaction.effecttype
+  pk: 1
+- fields: {Description: promotes, Slug: promotes}
+  model: Interaction.effecttype
+  pk: 2
+- fields: {Description: downregulates, Slug: downregulates}
+  model: Interaction.effecttype
+  pk: 3
+- fields: {Description: upregulates, Slug: upregulates}
+  model: Interaction.effecttype
+  pk: 4
+- fields: {Description: uneffected, Slug: uneffected}
+  model: Interaction.effecttype
+  pk: 5
+
