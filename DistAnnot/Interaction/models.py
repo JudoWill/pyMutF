@@ -57,6 +57,11 @@ class InteractionEffect(models.Model):
     Mutation = models.ForeignKey('Mutation')
     EffectType = models.ForeignKey('EffectType', null = True)
 
+    def __unicode__(self):
+        
+        return '%s:%s:%s' % (str(self.Interaction), str(self.Mutation),
+                            str(self.EffectType))
+
 class Gene(models.Model):
 
     Organism = models.CharField(max_length = 256)
