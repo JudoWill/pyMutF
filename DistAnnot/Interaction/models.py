@@ -1,9 +1,14 @@
 from django.db import models
-from DistAnnot.PubmedUtils import GetXML
+from DistAnnot.PubmedUtils import *
 from BeautifulSoup import BeautifulStoneSoup
-from django.template.defaultfilters import slugify
+from nltk.tokenize import sent_tokenize
+from itertools import count, izip
+import DistAnnot.settings as settings
+import os
 
 # Create your models here.
+from DistAnnot.mutation_finder import mutation_finder_from_regex_filepath as mutfinder_gen
+
 class Sentence(models.Model):
 
     Text = models.TextField()
@@ -147,7 +152,45 @@ class Article(models.Model):
 
         return self.PMCXML
 
+    def ReadMuts(self, MutFinder = None):
+
+        if MutFinder is None:
+            MutFinder = mutfinder_gen(settings + os.sep + 'regex.txt')
+
+        if not self.HasMut:
+            return
+
+        pargen = None
+        if self.PMCID is not None:
+            xml = self.GetPMCXML()
+            if xml:
+                pargen = ExtractPMCPar(xml)
+
+        elif self.PMID is not None:
+            xml = self.GetPubMedXML()
+            if xml:
+                pargen = ExtractPubPar(xml)
+
+        if not pargen is None:
+            self.HasMut = False
+            return
+
+        for par, parnum in izip(pargen, count(0)):
+            sent_list = ['']+list(sent_tokenize(par))+['']
+
+            for sentnum, sent in enumerate(sent_list):
+                for mut, loc in MutFinder(sent).items():
+                    self.HasMut = True
+                    text = ' '.join(sent_list[sentnum-1:sentnum+1])
+                    obj, isnew = Sentence.objects.get_or_create(Article = article,
+                                                    ParNum = parnum,
+                                                    SentNum = sentnum,
+                                                    defaults = {'Text':text})
 
 
+                    qset = obj.Mutation.filter(Mut = mut)
+                    if not qset.exists() and mut is not None and isnew:
+                        mut_obj = Mutation.objects.create(Mut = mut)
+                        obj.Mutation.add(mut_obj)
 
     

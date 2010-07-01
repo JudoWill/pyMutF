@@ -108,6 +108,7 @@ INSTALLED_APPS = (
 
 LOGIN_REDIRECT_URL = '/index.html'
 LOGIN_URL = 'login.html'
+HOME_DIR = os.path.realpath('')
 
 try:
 	from local_settings import *
