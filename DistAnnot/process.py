@@ -44,10 +44,26 @@ def AddGenesToDB(INTER_LIST):
 
     for row in INTER_LIST:
         
-        t = {'Organism':'HIV', 'Name':row['HIV-product-name']}
-        Gene.objects.get_or_create(Entrez = int(row['Gene-ID-1']), defaults = t)
+        t = {'Organism':'HIV', 'Name': row['HIV-product-name']}
+        try:
+            obj, isnew = Gene.objects.get_or_create(Entrez = int(row['Gene-ID-1']), defaults = t)
+        except MultipleObjectsReturned:
+            obj = Gene.objects.filter(Entrez = int(row['Gene-ID-1']))[0]
+            isnew = False
+
+        if obj.Name != t['Name']:
+            try:
+                ex, isnew = ExtraGeneName.objects.get_or_create(Name = t['Name'])
+                obj.ExtraNames.add(ex)
+            except MultipleObjectsReturned:
+                pass
+
+
         t = {'Organism':'Human', 'Name': row['Human-product-name']}
-        Gene.objects.get_or_create(Entrez = int(row['Gene-ID-2']), defaults = t)
+        try:
+            Gene.objects.get_or_create(Entrez = int(row['Gene-ID-2']), defaults = t)
+        except:
+            pass
 
 @django.db.transaction.commit_on_success
 def AddGeneNames(Fname):
@@ -106,7 +122,7 @@ def main():
 
     print 'Adding Genes'
     #AddGenesToDB(inter_list)
-    
+
     print 'Adding ExtraNames'
     #AddGeneNames('gene_info_human')
 

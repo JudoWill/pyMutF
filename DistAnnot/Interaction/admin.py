@@ -26,6 +26,8 @@ class EffectTypeAdmin(admin.ModelAdmin):
 class ArticleAdmin(admin.ModelAdmin):
     pass
 
+class ExtraGeneNameAdmin(admin.ModelAdmin):
+    pass
 
 admin.site.register(Sentence, SentenceAdmin)
 admin.site.register(Interaction, InteractionAdmin)
@@ -35,4 +37,5 @@ admin.site.register(Gene, GeneAdmin)
 admin.site.register(InteractionType, InteractionTypeAdmin)
 admin.site.register(EffectType, EffectTypeAdmin)
 admin.site.register(Article, ArticleAdmin)
+admin.site.register(ExtraGeneName, ExtraGeneNameAdmin)
 

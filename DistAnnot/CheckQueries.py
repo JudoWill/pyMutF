@@ -1,8 +1,7 @@
 from DistAnnot.Queries.models import *
 from DistAnnot.Interaction.models import *
-from process import TimedSemaphore
-from mutation_finder import *
 from PubmedUtils import *
+from django.core.exceptions import MultipleObjectsReturned
 
 from collections import defaultdict
 from itertools import izip, count
@@ -10,6 +9,10 @@ import csv
 
 import django.db.transaction
 import nltk.tokenize
+import datetime
+import DistAnnot.mutation_finder
+import DistAnnot.PubmedUtils
+import DistAnnot.process
 
 
 @django.db.transaction.commit_on_success
@@ -39,20 +42,33 @@ def CreateQueries(rule):
 
 @django.db.transaction.commit_on_success
 def DoQuery(rule, pmid_pmc, semaphore, MutFinder):
+
     with semaphore:
-        pmids = rule.DoQuery()
+        pmids = rule.DoQuery(USE_RECENT = False)
+
+    rule.LastChecked = datetime.datetime.now()
+    rule.save()
     print rule, len(pmids)
 
     for pmid in pmids:
 
-        art, isnew = Article.objects.get_or_create(PMID = pmid,
-                                                   PMCID = pmid_pmc[pmid])
-        if isnew:
-            rule.Articles.add(art)
-            with semaphore:
-                pargen = GetParGen(art)
-            if pargen is not None:
-                AddArticleToDB(pargen, MutFinder, art)
+        try:
+            art, isnew = Article.objects.get_or_create(PMID = pmid,
+                                                   defaults = {'PMCID': pmid_pmc[pmid]})
+        except MultipleObjectsReturned:
+            art = Article.objects.filter(PMID = pmid)[0]
+            isnew = False
+                                        
+
+        if isnew or art.HasMut is None:
+            print 'new or unannotated article: ', pmid
+
+
+        rule.Articles.add(art)
+        with semaphore:
+            pargen = GetParGen(art)
+        if pargen is not None:
+            AddArticleToDB(pargen, MutFinder, art)
 
 
 def GetParGen(article):
@@ -62,13 +78,13 @@ def GetParGen(article):
             if article.PMCID is not None:
                 xml = article.GetPMCXML()
                 if xml:
-                    pargen = ExtractPMCPar(xml)
+                    pargen = DistAnnot.PubmedUtils.ExtractPMCPar(xml)
 
             elif article.PMID is not None:
                 xml = article.GetPubMedXML()
                 if xml:
-                    pargen = ExtractPubPar(xml)
-
+                    pargen = DistAnnot.PubmedUtils.ExtractPubPar(xml)
+            print 'good pargen'
         except:
             print 'got error: ', article.PMID
             article.HasMut = None
@@ -91,6 +107,7 @@ def AddArticleToDB(ParGen, MutFinder, article):
 
         for sentnum, sent in enumerate(sent_list):
             for mut in MutFinder(sent).keys():
+                print 'Found mut!'
                 article.HasMut = True
                 text = ' '.join(sent_list[sentnum-1:sentnum+1])
                 obj, isnew = Sentence.objects.get_or_create(Article = article,
@@ -101,7 +118,7 @@ def AddArticleToDB(ParGen, MutFinder, article):
 
                 qset = obj.Mutation.filter(Mut = mut)
                 if not qset.exists() and mut is not None and isnew:
-                    mut_obj = Mutation.objects.create(Mut = mut)
+                    mut_obj = Mutation(Mut = mut)
                     obj.Mutation.add(mut_obj)
     article.save()
 
@@ -125,16 +142,16 @@ def main():
 
 
 
-    MutFinder = mutation_finder_from_regex_filepath('regex.txt')
-    EUtilsSem = TimedSemaphore(2, 3)
+    MutFinder = DistAnnot.mutation_finder.mutation_finder_from_regex_filepath('regex.txt')
+    EUtilsSem = DistAnnot.process.TimedSemaphore(2, 3)
 
     print 'Making Rules'
-    #for obj_dict in global_queries:
-    #    AddQuery(obj_dict)
+    for obj_dict in global_queries:
+        AddQuery(obj_dict)
 
     print 'Making Indiv Queries'
-    #for rule in QueryRule.objects.all():
-    #    CreateQueries(rule)
+    for rule in QueryRule.objects.all():
+        CreateQueries(rule)
 
     print 'Reading pmc_conv'
     pmid_pmc = defaultdict(lambda : None)
@@ -144,7 +161,9 @@ def main():
 
     print 'Doing actual queries'
     for query in Query.objects.all():
+
         DoQuery(query, pmid_pmc, EUtilsSem, MutFinder)
+
 
 if __name__ == '__main__':
     main()
