@@ -18,11 +18,11 @@ DATABASES = {
         'USER': 'pyMutF',                      # Not used with sqlite3.
         'PASSWORD': 'password',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-    }
+        'PORT': ''                                    # Set to empty string for default. Not used with sqlite3.
+    },
 }
 
-
+TEST_NAME = 'test_database'
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -97,7 +97,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
-    'django_extensions',
+    #'django_extensions',
     'Annot',
     'Interaction',
     'Queries',

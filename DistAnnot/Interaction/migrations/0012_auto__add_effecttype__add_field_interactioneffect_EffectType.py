@@ -22,11 +22,14 @@ class Migration(SchemaMigration):
         # Adding field 'InteractionEffect.EffectType'
         db.add_column('Interaction_interactioneffect', 'EffectType', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Interaction.EffectType'], null=True), keep_default=False)
         
-        for int_effect in DistAnnot.Interaction.models.InteractionEffect.objects.all():
-            slug = slugify(int_effect.Type)
-            obj, isnew = DistAnnot.Interaction.models.EffectType.objects.get_or_create(Slug = slug,
-                                                            Description = int_effect.Type)
-            int_effect.EffectType = obj
+        try:
+            for int_effect in DistAnnot.Interaction.models.InteractionEffect.objects.all():
+                slug = slugify(int_effect.Type)
+                obj, isnew = DistAnnot.Interaction.models.EffectType.objects.get_or_create(Slug = slug,
+                                                                Description = int_effect.Type)
+                int_effect.EffectType = obj
+        except:
+            pass
             
     
     def backwards(self, orm):
