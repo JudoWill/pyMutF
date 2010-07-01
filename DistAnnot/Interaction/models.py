@@ -149,15 +149,17 @@ class Article(models.Model):
             temp = GetXML([str(self.PMCID)], db = 'pmc')
             soup = BeautifulStoneSoup(temp)
             self.PMCXML = soup.prettify()
+            
 
         return self.PMCXML
 
     def ReadMuts(self, MutFinder = None):
 
         if MutFinder is None:
-            MutFinder = mutfinder_gen(settings + os.sep + 'regex.txt')
+            MutFinder = mutfinder_gen(settings.HOME_DIR + os.sep + 'regex.txt')
 
-        if not self.HasMut:
+
+        if self.HasMut == False:
             return
 
         pargen = None
@@ -171,18 +173,17 @@ class Article(models.Model):
             if xml:
                 pargen = ExtractPubPar(xml)
 
-        if not pargen is None:
-            self.HasMut = False
-            return
+
+        self.HasMut = False
+        
 
         for par, parnum in izip(pargen, count(0)):
             sent_list = ['']+list(sent_tokenize(par))+['']
-
             for sentnum, sent in enumerate(sent_list):
                 for mut, loc in MutFinder(sent).items():
                     self.HasMut = True
                     text = ' '.join(sent_list[sentnum-1:sentnum+1])
-                    obj, isnew = Sentence.objects.get_or_create(Article = article,
+                    obj, isnew = Sentence.objects.get_or_create(Article = self,
                                                     ParNum = parnum,
                                                     SentNum = sentnum,
                                                     defaults = {'Text':text})
