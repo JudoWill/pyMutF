@@ -28,15 +28,10 @@
             {% block navigation %}
             <h2>Navigation</h2>
             <ul>
-            <li><h3><a href="{% url LabelMutation  %}">Start Labeling!</a></h3></li>
+            <li><a href="{% url LabelMutation  %}">Start Labeling!</a></li>
+            <li><a href="{% url stats  %}">Labeling Statistics</a></li>
             </ul>
-            {% if navlist %}
-            <ul>
-            {% for nav in navlist %}
-            <li><h3><a href="{{ nav.url }}">{{ nav.text }}</a></h3></li>
-            {% endfor %}
-            </ul>
-            {% endif %}
+
             {% endblock %}
 			{% block login %}
 			{% if user.is_authenticated %}
