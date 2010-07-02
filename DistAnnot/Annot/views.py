@@ -130,7 +130,9 @@ def LabelMutation(request, SentID = None, MutID = None):
 
 def GetRandomSent():
 
-    q = Sentence.objects.annotate(num_gene = Count('Mutation__Gene')).filter(num_gene__neq = 0)
+    q = Sentence.objects.annotate(num_gene = Count('Mutation__Gene'),
+                                  num_mut = Count('Mutation'))
+    q = q.filter(num_gene__neq = 0, num_mut__gte = 1)
     num_free = q.count()
     if num_free > 0:
         rind = randint(0, num_free)
