@@ -8,7 +8,7 @@ from mutation_finder import *
 from collections import defaultdict
 
 from nltk.tokenize import sent_tokenize
-from itertools import count, izip
+from itertools import count, izip, groupby
 
 from django.core.exceptions import MultipleObjectsReturned
 
@@ -79,7 +79,29 @@ def AddGeneNames(Fname):
             except MultipleObjectsReturned:
                 continue
             gene.ExtraNames.add(ex)
+
+@django.db.transaction.commit_on_success
+def AddAllNames(Fname):
+    with open(Fname) as handle:
+        rowgen = csv.DictReader(handle, delimiter = '\t')
+        for key, rows in groupby(rowgen, lambda x: x['GeneID']):
+            try:
+                gene, isnew = Gene.objects.get_or_create(Entrez = int(key))
+            except MultipleObjectsReturned:
+                continue
+            if isnew:
+                gene.Organism = 'Human'
+                gene.Name = rows.next()['Symbol']
+                for row in rows:
+                    try:
+                        ex, isnew = ExtraGeneName.objects.get_or_create(Name = row['Symbol'])
+                    except MultipleObjectsReturned:
+                        continue
+                    if isnew:
+                        gene.ExtraNames.add(ex)
+
             
+
 
 @django.db.transaction.commit_on_success
 def AddArticleToDB(ParGen, MutFinder, article, interaction):
