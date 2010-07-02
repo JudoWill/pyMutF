@@ -5,6 +5,7 @@ from DistAnnot.Annot.models import *
 
 from django.forms.formsets import formset_factory
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import *
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
@@ -29,7 +30,13 @@ def LabelMutation(request, SentID = None, MutID = None):
         effect_form = InteractionEffectFormset(request.POST, prefix = 'effect')
         sentence = Sentence.objects.get(id=int(request.POST['annot-SentenceID']))
         print request.POST['annot-MutID']
-        mut = Mutation.objects.get(id=int(request.POST['annot-MutID']))
+        try:
+            mut = Mutation.objects.get(id=int(request.POST['annot-MutID']))
+        except ObjectDoesNotExist:
+            return HttpResponseRedirect(reverse('LabelMutation'))
+
+
+
         if annot_form.is_valid() and effect_form.is_valid():
             if not annot_form.cleaned_data['Bad_extraction']:
                 if annot_form.cleaned_data['MutatedGene']:
