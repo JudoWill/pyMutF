@@ -27,8 +27,12 @@ class ChoiceGeneField(forms.ModelChoiceField):
             return None
         print value
         vparts = value.split(':')
-        typ = vparts[0]
-        ref = vparts[1].split(',')[0]        
+        try:
+            typ = vparts[0]
+            ref = vparts[1].split(',')[0]
+        except IndexError:
+            return None
+
         Qgen = self.qresolve[typ]
         Qobj = Qgen(ref)
         try:
@@ -66,8 +70,12 @@ class MultiChoiceGeneField(ChoiceGeneField):
         for label in labels:
             vparts = label.split(':')
             print label
-            typ = vparts[0]
-            ref = vparts[1]
+            try:
+                typ = vparts[0]
+                ref = vparts[1]
+            except IndexError:
+                continue
+
             Qgen = self.qresolve[typ]
             Qobj = Qgen(ref)
             try:
