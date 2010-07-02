@@ -66,9 +66,7 @@ def DoQuery(rule, pmid_pmc, semaphore, MutFinder):
 
         rule.Articles.add(art)
         with semaphore:
-            pargen = GetParGen(art)
-        if pargen is not None:
-            AddArticleToDB(pargen, MutFinder, art)
+            art.ReadMuts(MutFinder = MutFinder)
 
 
 def GetParGen(article):
@@ -146,12 +144,12 @@ def main():
     EUtilsSem = DistAnnot.process.TimedSemaphore(2, 3)
 
     print 'Making Rules'
-    for obj_dict in global_queries:
-        AddQuery(obj_dict)
+    #for obj_dict in global_queries:
+    #    AddQuery(obj_dict)
 
     print 'Making Indiv Queries'
-    for rule in QueryRule.objects.all():
-        CreateQueries(rule)
+    #for rule in QueryRule.objects.all():
+    #    CreateQueries(rule)
 
     print 'Reading pmc_conv'
     pmid_pmc = defaultdict(lambda : None)
@@ -160,9 +158,11 @@ def main():
             pmid_pmc[row['PMID']] = row['PMCID']
 
     print 'Doing actual queries'
-    for query in Query.objects.all():
-
-        DoQuery(query, pmid_pmc, EUtilsSem, MutFinder)
+    for query in Query.objects.filter(LastChecked__isnull = True).order_by('-DateAdded'):
+        try:
+            DoQuery(query, pmid_pmc, EUtilsSem, MutFinder)
+        except:
+            pass
 
 
 if __name__ == '__main__':
