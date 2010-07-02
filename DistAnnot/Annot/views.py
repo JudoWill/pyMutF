@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.template.defaultfilters import slugify
+from django.db import IntegrityError
 
 from forms import AnnotForm, InteractionEffectForm
 from django.db.models import Count
@@ -72,10 +73,13 @@ def LabelMutation(request, SentID = None, MutID = None):
                         effect = eform.cleaned_data['EffectChoice']
                     else:
                         continue
+                    try:
+                        ie, isnew = InteractionEffect.objects.get_or_create(Interaction = inter,
+                                                                            Mutation = mut,
+                                                                            EffectType = effect)
+                    except IntegrityError:
+                        continue
 
-                    ie, isnew = InteractionEffect.objects.get_or_create(Interaction = inter,
-                                                                        Mutation = mut,
-                                                                        EffectType = effect)
                     if isnew:
                         InteractionEffectAnnot(User = request.user, InteractionEffect = ie,
                                                EffectChosen = effect).save()
