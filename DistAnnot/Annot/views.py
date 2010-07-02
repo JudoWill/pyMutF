@@ -33,6 +33,8 @@ def LabelMutation(request, SentID = None, MutID = None):
                                           GeneChosen = annot_form.cleaned_data['MutatedGene'])
                     mut_annot.save()
                     mut_annot.update_link()
+                    mut.Gene = annot_form.cleaned_data['MutatedGene']
+                    mut.save()
                     #Send a message
                     request.user.message_set.create(message = 'Sucessfully attributed %s to %s' % (str(mut), str(mut_annot.GeneChosen)))
                 else:
