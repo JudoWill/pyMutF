@@ -48,14 +48,15 @@ def LabelMutation(request, SentID = None, MutID = None):
 
 
                 picked_genes = annot_form.cleaned_data['MentionedGenes']
-                for gene in picked_genes.exclude(id__in = sentence.Genes.all()):
-                    obj = GeneAnnotation(Sentence = sentence, Gene = gene)
-                    obj.save()
-                    #sentence.Genes.add(obj)
-                    GeneAnnot(User = request.user, Annotation = obj).save()
+                if picked_genes:
+                    for gene in picked_genes.exclude(id__in = sentence.Genes.all()):
+                        obj = GeneAnnotation(Sentence = sentence, Gene = gene)
+                        obj.save()
+                        #sentence.Genes.add(obj)
+                        GeneAnnot(User = request.user, Annotation = obj).save()
 
-                    #Send a message
-                    request.user.message_set.create(message = 'Sucessfully added %s ' % str(gene))
+                        #Send a message
+                        request.user.message_set.create(message = 'Sucessfully added %s ' % str(gene))
 
                 for eform in effect_form.forms:
                     inter = Interaction.objects.get(id = eform.cleaned_data['id'])
