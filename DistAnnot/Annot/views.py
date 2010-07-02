@@ -12,6 +12,9 @@ from django.http import HttpResponseRedirect
 from django.template.defaultfilters import slugify
 
 from forms import AnnotForm, InteractionEffectForm
+from django.db.models import Count
+
+from random import randint
 
 
 @login_required
@@ -96,7 +99,7 @@ def LabelMutation(request, SentID = None, MutID = None):
         if SentID:
             sentence = Sentence.objects.get(SentID)
         else:
-            sentence = Sentence.objects.all().order_by('?')[0]
+            sentence = GetRandomSent()
         if MutID:
             mut = Mutation.objects.get(id = int(MutID))
         else:
@@ -122,3 +125,16 @@ def LabelMutation(request, SentID = None, MutID = None):
 
     return render_to_response("Annot/LabelMutation.html", out_dict,
                               context_instance = RequestContext(request))
+
+
+def GetRandomSent():
+
+    q = Sentence.objects.annotate(num_gene = Count('Mutation__Gene')).filter(num_gene__neq = 0)
+    num_free = q.count()
+    if num_free > 0:
+        rind = randint(0, num_free)
+    else:
+        q = Sentence.objects.all()
+        rind = randint(0, q.count())
+
+    return q[rind]
