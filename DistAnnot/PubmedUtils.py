@@ -34,7 +34,9 @@ def SearchPUBMED(search_sent, recent_date = None):
     POST_URL = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmax=1000000'
     moz_emu = PyMozilla.MozillaEmulator(cacher = None)
 
-    search_term = search_sent.replace(' ', '+')
+    search_term = search_sent.replace(' ', '%20')
+    search_term = search_sent.replace('-', '%20')
+    search_term = search_sent.replace('+', '%20')
     search_url = POST_URL + '&term=' + search_term
     if recent_date:
         time_delta = date.today()-recent_date
