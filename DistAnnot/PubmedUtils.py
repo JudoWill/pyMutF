@@ -84,9 +84,13 @@ def GetXMLfromList(IDS, db = 'pubmed', NUM_TAKE = 50, WAITINGSEM = TimedSemaphor
 
 
 
-def SearchPUBMED(search_sent, recent_date = None):
+def SearchPUBMED(search_sent, recent_date = None, BLOCK_SIZE = 100000, START = 0):
 
-    POST_URL = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmax=1000000'
+    POST_URL = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&'
+    POST_URL += 'retmax=%i&' % BLOCK_SIZE
+    if START > 0:
+        POST_URL += 'retstart=%i&' % START
+
     moz_emu = PyMozilla.MozillaEmulator(cacher = None)
 
     search_term = search_sent.replace(' ', '%20')
@@ -101,7 +105,12 @@ def SearchPUBMED(search_sent, recent_date = None):
 
     id_list = re.findall('<Id>(\d*)</Id>', xml_data)
     id_nums = map(lambda x: int(x), id_list)
-    return id_nums
+
+    if len(id_nums) == BLOCK_SIZE:
+        return id_nums + SearchPUBMED(search_sent, recent_date = recent_date,
+                                      BLOCK_SIZE = BLOCK_SIZE, START = START+BLOCK_SIZE-1)
+    else:
+        return id_nums
 
 
 def ExtractPMCPar(xmldata):
