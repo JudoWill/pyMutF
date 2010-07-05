@@ -53,20 +53,10 @@ def DoQuery(rule, pmid_pmc, semaphore, MutFinder):
     for pmid in pmids:
 
         try:
-            art, isnew = Article.objects.get_or_create(PMID = pmid,
-                                                   defaults = {'PMCID': pmid_pmc[pmid]})
+            Article.objects.get_or_create(PMID = pmid,
+                                          defaults = {'PMCID': pmid_pmc[pmid]})
         except MultipleObjectsReturned:
-            art = Article.objects.filter(PMID = pmid)[0]
-            isnew = False
-                                        
-
-        if isnew or art.HasMut is None:
-            print 'new or unannotated article: ', pmid
-
-
-        rule.Articles.add(art)
-        with semaphore:
-            art.ReadMuts(MutFinder = MutFinder)
+            pass
 
 
 def GetParGen(article):
@@ -97,8 +87,6 @@ def GetParGen(article):
 def AddArticleToDB(ParGen, MutFinder, article):
     """Add sentences into the database"""
 
-
-
     article.HasMut = False
     for par, parnum in izip(ParGen, count(0)):
         sent_list = ['']+list(nltk.tokenize.sent_tokenize(par))+['']
@@ -119,6 +107,11 @@ def AddArticleToDB(ParGen, MutFinder, article):
                     mut_obj = Mutation(Mut = mut)
                     obj.Mutation.add(mut_obj)
     article.save()
+
+def GetPubMed(semaphore):
+
+    
+
 
 
 
@@ -159,10 +152,12 @@ def main():
 
     print 'Doing actual queries'
     for query in Query.objects.filter(LastChecked__isnull = True).order_by('-DateAdded'):
-        try:
-            DoQuery(query, pmid_pmc, EUtilsSem, MutFinder)
-        except:
-            pass
+        DoQuery(query, pmid_pmc, EUtilsSem, MutFinder)
+
+    GetPubMed(EUtilsSem)
+    CheckPMC(EUtilsSem)
+    GetPMC(EUtilsSem)
+
 
 
 if __name__ == '__main__':
