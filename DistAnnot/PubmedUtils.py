@@ -48,7 +48,7 @@ def GetXMLfromList(IDS, db = 'pubmed', NUM_TAKE = 50, WAITINGSEM = TimedSemaphor
         for art in soup.findAll('article'):
             found_id = None
             for id in art.findAll('article-id'):
-                if 'pmc' in id:
+                if 'pmc' in str(id):
                     found_id = id.string
                     yield art.prettify(), 'PMC'+found_id
                     break
@@ -75,22 +75,12 @@ def GetXMLfromList(IDS, db = 'pubmed', NUM_TAKE = 50, WAITINGSEM = TimedSemaphor
     while len(block) != 0:
         with WAITINGSEM:
             data = GetXML(block, db = db)
-            
+
         for art, id in data_getter(data):
             yield art, id
         block = take(NUM_TAKE, objiter)
         print 'retrieved %i of %i articles' % (counter, len(IDS))
         counter += NUM_TAKE
-
-
-
-                                                                                                 
-
-
-
-
-
-
 
 
 

@@ -128,9 +128,15 @@ def GetPubMed(MutFinder, semaphore):
             AddArticleToDB(pargen, MutFinder, obj)
 
 
+@django.db.transaction.commit_on_success
+def CheckPMC(conv_dict):
 
-def CheckPMC(semaphore):
-    pass
+    for item in Article.objects.filter(PMID__isnull = False,
+                                       PMCID__isnull = True).iterator():
+        if str(item.PMID) in conv_dict:
+            item.PMCID = conv_dict[str(item.PMID)]
+            item.save()
+
 
 
 
@@ -139,7 +145,8 @@ def GetPMC(MutFinder, semaphore):
     if check_articles.exists():
         ids = map(operator.attrgetter('PMCID'), check_articles)
         print 'need to check %i PMC articles' % len(ids)
-        for id, art in GetXMLfromList(ids, db = 'pmc', WAITINGSEM = semaphore):
+        for art, id in GetXMLfromList(ids, db = 'pmc', WAITINGSEM = semaphore):
+            
             try:
                 obj = Article.objects.get(PMCID = id)
             except MultipleObjectsReturned:
@@ -195,7 +202,7 @@ def main():
         DoQuery(query, pmid_pmc, EUtilsSem, MutFinder)
 
     GetPubMed(MutFinder, EUtilsSem)
-    CheckPMC(EUtilsSem)
+    CheckPMC(pmid_pmc)
     GetPMC(MutFinder, EUtilsSem)
 
 
