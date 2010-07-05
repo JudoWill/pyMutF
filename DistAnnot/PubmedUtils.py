@@ -41,7 +41,7 @@ def GetXMLfromList(IDS, db = 'pubmed', NUM_TAKE = 50, WAITINGSEM = TimedSemaphor
 
         soup = BeautifulStoneSoup(article_set)
         for art in soup.findAll('pubmedarticle'):
-            yield art.prettify(), art.find('pmid')
+            yield art.prettify(), art.find('pmid').string
 
     def GetPMCTuple(article_set):
         soup = BeautifulStoneSoup(article_set)
@@ -69,23 +69,22 @@ def GetXMLfromList(IDS, db = 'pubmed', NUM_TAKE = 50, WAITINGSEM = TimedSemaphor
     IDS = list(IDS) #since we need to traverse this a few times we need to make sure it doesn't get exhausted
 
     objiter = iter(IDS)
-    block = take(objiter, NUM_TAKE)
-
-    id_dict = {}
+    block = take(NUM_TAKE, objiter)
+    counter = NUM_TAKE
 
     while len(block) != 0:
         with WAITINGSEM:
             data = GetXML(block, db = db)
             
         for art, id in data_getter(data):
-            id_dict[id] = art
-        block = take(objiter, NUM_TAKE)
-
-    for id in IDS:
-        if str(id) in id_dict:
-            yield id, id_dict[str(id)]
+            yield art, id
+        block = take(NUM_TAKE, objiter)
+        print 'retrieved %i of %i articles' % (counter, len(IDS))
+        counter += NUM_TAKE
 
 
+
+                                                                                                 
 
 
 

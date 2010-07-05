@@ -115,13 +115,13 @@ def GetPubMed(MutFinder, semaphore):
     check_articles = Article.objects.filter(PMID__isnull = False, PubMedXML__isnull = True)
     if check_articles.exists():
         ids = map(operator.attrgetter('PMID'), check_articles)
-        check_objects = set()
-        for id, art in GetXMLfromList(ids, db = 'pubmed', WAITINGSEM = semaphore):
+        print 'need to check %i pubmed articles' % len(ids)
+        for art, id in GetXMLfromList(ids, db = 'pubmed', WAITINGSEM = semaphore):
             try:
                 obj = Article.objects.get(PMID = int(id))
             except MultipleObjectsReturned:
                 obj = Article.objects.filter(PMID = int(id))[0]
-
+            #print art, obj
             obj.PubMedXML = art
             obj.save()
             pargen = DistAnnot.PubmedUtils.ExtractPMCPar(art)
@@ -138,14 +138,14 @@ def GetPMC(MutFinder, semaphore):
     check_articles = Article.objects.filter(PMCID__isnull = False, PMCXML__isnull = True)
     if check_articles.exists():
         ids = map(operator.attrgetter('PMCID'), check_articles)
-        check_objects = set()
+        print 'need to check %i PMC articles' % len(ids)
         for id, art in GetXMLfromList(ids, db = 'pmc', WAITINGSEM = semaphore):
             try:
                 obj = Article.objects.get(PMCID = id)
             except MultipleObjectsReturned:
                 obj = Article.objects.filter(PMCID = id)[0]
 
-            obj.PubMedXML = art
+            obj.PMCXML = art
             obj.save()
             pargen = DistAnnot.PubmedUtils.ExtractPubPar(art)
             AddArticleToDB(pargen, MutFinder, obj)
