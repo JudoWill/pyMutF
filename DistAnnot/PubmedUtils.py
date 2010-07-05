@@ -5,6 +5,13 @@ import PyMozilla
 import re
 from datetime import date
 from BeautifulSoup import BeautifulStoneSoup
+from itertools import islice
+from operator import attrgetter
+
+
+def take(NUM, iterable):
+    return list(islice(iterable, NUM))
+
 
 
 def GetXML(ID_LIST, db = 'pubmed'):
@@ -27,6 +34,65 @@ def GetXML(ID_LIST, db = 'pubmed'):
 
     xml_data = moz_emu.download(req_url, trycount = 3)
     return xml_data.decode('ascii', 'ignore')
+
+
+def GetXMLfromList(IDS, db = 'pubmed', NUM_TAKE = 50):
+
+    def GetPubmedTuple(article_set):
+
+        soup = BeautifulStoneSoup(article_set)
+        for art in soup.findAll('pubmedarticle'):
+            yield art.prettify(), art.find('pmid')
+
+    def GetPMCTuple(article_set):
+        soup = BeautifulStoneSoup(article_set)
+        for art in soup.findAll('article'):
+            found_id = None
+            for id in art.findAll('article-id'):
+                if 'pmc' in id:
+                    found_id = id.string
+                    yield art.prettify(), 'PMC'+found_id
+                    break
+            if found_id is None:
+                raise KeyError, 'Could not find "pmc"'
+                    
+
+    valid_db = set(['pubmed', 'pmc'])
+    assert db in valid_db
+
+
+    if db == 'pubmed':
+        data_getter = GetPubmedTuple
+    else:
+        data_getter = GetPMCTuple
+
+
+    IDS = list(IDS) #since we need to traverse this a few times we need to make sure it doesn't get exhausted
+
+    objiter = iter(IDS)
+    block = take(objiter, NUM_TAKE)
+
+    id_dict = {}
+
+    while len(block) != 0:
+
+        data = GetXML(block, db = db)
+        for art, id in data_getter(data):
+            id_dict[id] = art
+        block = take(objiter, NUM_TAKE)
+
+    for id in IDS:
+        if str(id) in id_dict:
+            yield id, id_dict[str(id)]
+
+
+
+
+
+
+
+
+
 
 
 def SearchPUBMED(search_sent, recent_date = None):
