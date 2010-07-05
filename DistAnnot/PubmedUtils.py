@@ -6,8 +6,7 @@ import re
 from datetime import date
 from BeautifulSoup import BeautifulStoneSoup
 from itertools import islice
-from operator import attrgetter
-
+from DistAnnot.process import TimedSemaphore
 
 def take(NUM, iterable):
     return list(islice(iterable, NUM))
@@ -36,7 +35,7 @@ def GetXML(ID_LIST, db = 'pubmed'):
     return xml_data.decode('ascii', 'ignore')
 
 
-def GetXMLfromList(IDS, db = 'pubmed', NUM_TAKE = 50):
+def GetXMLfromList(IDS, db = 'pubmed', NUM_TAKE = 50, WAITINGSEM = TimedSemaphore(2,3)):
 
     def GetPubmedTuple(article_set):
 
@@ -75,8 +74,9 @@ def GetXMLfromList(IDS, db = 'pubmed', NUM_TAKE = 50):
     id_dict = {}
 
     while len(block) != 0:
-
-        data = GetXML(block, db = db)
+        with WAITINGSEM:
+            data = GetXML(block, db = db)
+            
         for art, id in data_getter(data):
             id_dict[id] = art
         block = take(objiter, NUM_TAKE)
