@@ -124,15 +124,31 @@ def GetPubMed(MutFinder, semaphore):
 
             obj.PubMedXML = art
             obj.save()
-            pargen = DistAnnot.PubmedUtils.ExtractPubPar(art)
+            pargen = DistAnnot.PubmedUtils.ExtractPMCPar(art)
             AddArticleToDB(pargen, MutFinder, obj)
 
 
 
+def CheckPMC(semaphore):
+    pass
 
 
 
+def GetPMC(MutFinder, semaphore):
+    check_articles = Article.objects.filter(PMCID__isnull = False, PMCXML__isnull = True)
+    if check_articles.exists():
+        ids = map(operator.attrgetter('PMCID'), check_articles)
+        check_objects = set()
+        for id, art in GetXMLfromList(ids, db = 'pmc', WAITINGSEM = semaphore):
+            try:
+                obj = Article.objects.get(PMCID = id)
+            except MultipleObjectsReturned:
+                obj = Article.objects.filter(PMCID = id)[0]
 
+            obj.PubMedXML = art
+            obj.save()
+            pargen = DistAnnot.PubmedUtils.ExtractPubPar(art)
+            AddArticleToDB(pargen, MutFinder, obj)
 
     
 
