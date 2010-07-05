@@ -13,6 +13,7 @@ import datetime
 import DistAnnot.mutation_finder
 import DistAnnot.PubmedUtils
 import DistAnnot.process
+import operator
 
 
 @django.db.transaction.commit_on_success
@@ -108,7 +109,30 @@ def AddArticleToDB(ParGen, MutFinder, article):
                     obj.Mutation.add(mut_obj)
     article.save()
 
-def GetPubMed(semaphore):
+def GetPubMed(MutFinder, semaphore):
+    
+
+    check_articles = Article.objects.filter(PMID__isnull = False, PubMedXML__isnull = True)
+    if check_articles.exists():
+        ids = map(operator.attrgetter('PMID'), check_articles)
+        check_objects = set()
+        for id, art in GetXMLfromList(ids, db = 'pubmed', WAITINGSEM = semaphore):
+            try:
+                obj = Article.objects.get(PMID = int(id))
+            except MultipleObjectsReturned:
+                obj = Article.objects.filter(PMID = int(id))[0]
+
+            obj.PubMedXML = art
+            obj.save()
+            pargen = DistAnnot.PubmedUtils.ExtractPubPar(art)
+            AddArticleToDB(pargen, MutFinder, obj)
+
+
+
+
+
+
+
 
     
 
@@ -154,7 +178,7 @@ def main():
     for query in Query.objects.filter(LastChecked__isnull = True).order_by('-DateAdded'):
         DoQuery(query, pmid_pmc, EUtilsSem, MutFinder)
 
-    GetPubMed(EUtilsSem)
+    GetPubMed(MutFinder, EUtilsSem)
     CheckPMC(EUtilsSem)
     GetPMC(EUtilsSem)
 
