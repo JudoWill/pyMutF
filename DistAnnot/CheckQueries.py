@@ -196,7 +196,7 @@ def main():
 
     GetPubMed(MutFinder, EUtilsSem)
     CheckPMC(EUtilsSem)
-    GetPMC(EUtilsSem)
+    GetPMC(MutFinder, EUtilsSem)
 
 
 
