@@ -4,6 +4,17 @@ import random
 
 
 
+
+def UpdatePriority(sentence):
+    pri = max(10-sentence.Mutation.filter(Gene__isnull = True).count(), 1)
+
+    sentence.Priority = pri if pri != 10 else None
+    sentence.RandOrder = random.random()
+    sentence.save()
+
+
+
+
 def main():
 
 
@@ -11,11 +22,7 @@ def main():
 
     for num, sent in enumerate(Sentence.objects.all().select_related('Mutation').iterator()):
         print num
-        pri = max(10-sent.Mutation.filter(Gene__isnull = True).count(), 1)
-        
-        sent.Priority = pri if pri != 10 else None
-        sent.RandOrder = random.random()
-        sent.save()
+        UpdatePriority(sent)
 
 
 
