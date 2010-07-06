@@ -18,6 +18,8 @@ class Sentence(models.Model):
     Genes = models.ManyToManyField('Gene', through = 'GeneAnnotation')
     Mutation = models.ManyToManyField('Mutation')
     Article = models.ForeignKey('Article', null = True, default = None)
+    Priority = models.IntegerField(null = True, default = None)
+    RandOrder = models.IntegerField(null = True, default = None)
 
     def __unicode__(self):
 
