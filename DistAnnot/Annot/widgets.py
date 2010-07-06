@@ -57,7 +57,7 @@ class AutoCompleteTagInput(forms.TextInput):
                 matchContains: true,
                 autoFill: true,
             });
-            </script>''' % (json_data, name))
+            </script>''' % (name, json_data))
 
 class AutoCompleteTagInputLarge(forms.Textarea):
     class Media:
@@ -79,7 +79,6 @@ class AutoCompleteTagInputLarge(forms.Textarea):
         mapping = self.attrs['mapping']
         json_data = MakeList(mapping, qset, os.path.join(settings.STATIC_FILE_ROOT,
                                              'data', 'gene_names.json'))
-
         return output + mark_safe(u'''<script type="text/javascript">
             jQuery("#id_%s").autocomplete(%s, {
                 width: 700,
@@ -92,4 +91,4 @@ class AutoCompleteTagInputLarge(forms.Textarea):
                 matchContains: true,
                 autoFill: true,
             });
-            </script>''' % (json_data, name))
+            </script>''' % (name, json_data))

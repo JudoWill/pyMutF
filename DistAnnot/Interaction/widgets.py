@@ -10,7 +10,7 @@ from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
 class ChoiceGeneField(forms.ModelChoiceField):
     def __init__(self, queryset, *args, **kwargs):
-        self.queryset = queryset
+        self.queryset = queryset.select_related('ExtraNames')
         self.mapping = {    'GN':attrgetter('Name'),
                             'EN':attrgetter('Entrez'),
                             'ON':lambda x:list(x.ExtraNames.all())}
@@ -48,7 +48,7 @@ class ChoiceGeneField(forms.ModelChoiceField):
 
 class MultiChoiceGeneField(ChoiceGeneField):
     def __init__(self, queryset, *args, **kwargs):
-        self.queryset = queryset
+        self.queryset = queryset.select_related('ExtraNames')
         self.mapping = {    'GN':attrgetter('Name'),
                             'EN':attrgetter('Entrez'),
                             'ON':lambda x:list(x.ExtraNames.all())}
