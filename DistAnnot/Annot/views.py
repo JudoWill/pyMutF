@@ -152,4 +152,7 @@ def GetRandomSent():
         q = Sentence.objects.all()
         rind = randint(0, q.count())
 
-    return q[rind]
+    sent = q[rind]
+    UpdatePriority(sent)
+
+    return sent
