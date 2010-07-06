@@ -19,7 +19,7 @@ class Sentence(models.Model):
     Mutation = models.ManyToManyField('Mutation')
     Article = models.ForeignKey('Article', null = True, default = None)
     Priority = models.IntegerField(null = True, default = None)
-    RandOrder = models.IntegerField(null = True, default = None)
+    RandOrder = models.FloatField(null = True, default = None)
 
     def __unicode__(self):
 
