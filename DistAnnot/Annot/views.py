@@ -54,6 +54,8 @@ def LabelMutation(request, SentID = None, MutID = None):
 
                     mut.delete()
 
+                #update the priority based on the new mutation information
+                UpdatePriority(sentence)
 
                 picked_genes = annot_form.cleaned_data['MentionedGenes']
                 if picked_genes:
