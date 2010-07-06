@@ -34,6 +34,9 @@ class Interaction(models.Model):
                                 limit_choices_to = {'Organism__eq':'Human'})
     InteractionType = models.ForeignKey('InteractionType')
 
+    class Meta:
+        get_latest_by = 'HIVGene'
+
     def __unicode__(self):
         
         return '%s:%s:%s' % (str(self.HIVGene),

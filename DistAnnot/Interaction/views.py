@@ -4,6 +4,7 @@ from django.conf import settings
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
+from django.views.generic import list_detail
 # Create your views here.
 
 from DistAnnot.Interaction.models import *
@@ -34,3 +35,13 @@ def stats(request):
 
     return render_to_response('Interaction/stats.html', cdict,
                               context_instance = RequestContext(request))
+
+def mutation_list(request):
+
+    response = list_detail.object_list(
+        request,
+        queryset = Mutation.objects.all().order_by('Mut', '-Interaction'),
+        template_name = 'Interaction/Mutation_list.html'
+    )
+
+    return response
