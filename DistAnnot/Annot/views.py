@@ -17,6 +17,7 @@ from forms import AnnotForm, InteractionEffectForm
 from django.db.models import Count
 
 from random import randint
+from DistAnnot.CreateOrder import UpdatePriority
 
 
 @login_required
