@@ -3,21 +3,25 @@ from django.conf import settings
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from types import ListType
+import os.path
 
 
-def MakeList(mapping, qset):
+def MakeList(mapping, qset, location):
 
-    tlist = []
-    for item in qset:
-        for key, fun in mapping.items():
-            val = fun(item)
-            if type(val) is ListType:
-                for v in val:
-                    tlist.append(key+':'+v.Name)
-            else:
-                tlist.append(key+':'+str(val))
-    return tlist
-
+    if not os.path.exists(location):
+        tlist = []
+        for item in qset:
+            for key, fun in mapping.items():
+                val = fun(item)
+                if type(val) is ListType:
+                    for v in val:
+                        tlist.append(key+':'+v.Name)
+                else:
+                    tlist.append(key+':'+str(val))
+        with open(location, 'w') as handle:
+            handle.write(simplejson.dumps(tlist, ensure_ascii = False))
+    with open(location) as handle:
+        return handle.read()
 
 
 
@@ -39,10 +43,8 @@ class AutoCompleteTagInput(forms.TextInput):
 
         qset = self.attrs['queryset']
         mapping = self.attrs['mapping']
-        tag_items = MakeList(mapping, qset)
-
-        tag_list = simplejson.dumps(tag_items,
-                                    ensure_ascii=False)
+        json_data = MakeList(mapping, qset, os.path.join(settings.STATIC_FILE_ROOT,
+                                             'data', 'gene_names.json'))
         return output + mark_safe(u'''<script type="text/javascript">
             jQuery("#id_%s").autocomplete(%s, {
                 width: 700,
@@ -55,7 +57,7 @@ class AutoCompleteTagInput(forms.TextInput):
                 matchContains: true,
                 autoFill: true,
             });
-            </script>''' % (name, tag_list))
+            </script>''' % (json_data, name))
 
 class AutoCompleteTagInputLarge(forms.Textarea):
     class Media:
@@ -75,9 +77,9 @@ class AutoCompleteTagInputLarge(forms.Textarea):
 
         qset = self.attrs['queryset']
         mapping = self.attrs['mapping']
-        tag_items = MakeList(mapping, qset)
-        tag_list = simplejson.dumps(tag_items,
-                                    ensure_ascii=False)
+        json_data = MakeList(mapping, qset, os.path.join(settings.STATIC_FILE_ROOT,
+                                             'data', 'gene_names.json'))
+
         return output + mark_safe(u'''<script type="text/javascript">
             jQuery("#id_%s").autocomplete(%s, {
                 width: 700,
@@ -90,4 +92,4 @@ class AutoCompleteTagInputLarge(forms.Textarea):
                 matchContains: true,
                 autoFill: true,
             });
-            </script>''' % (name, tag_list))
+            </script>''' % (json_data, name))
