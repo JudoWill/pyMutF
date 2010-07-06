@@ -23,7 +23,12 @@ from DistAnnot.CreateOrder import UpdatePriority
 @login_required
 def LabelMutation(request, SentID = None, MutID = None):
     """A view to display the Mutation and sentence for annotation"""
-    
+    print str(SentID), str(MutID)
+    if not SentID is None:
+        SentID = int(SentID)
+    if not MutID is None:
+        MutID = int(MutID)
+        
     InteractionEffectFormset = formset_factory(InteractionEffectForm, extra = 0)
     
     if request.method == 'POST':
@@ -112,7 +117,7 @@ def LabelMutation(request, SentID = None, MutID = None):
 
     else:
         if SentID:
-            sentence = Sentence.objects.get(SentID)
+            sentence = Sentence.objects.get(id = SentID)
         else:
             sentence = GetRandomSent()
         if MutID:

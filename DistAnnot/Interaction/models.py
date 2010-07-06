@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.urlresolvers import reverse
 from DistAnnot.PubmedUtils import *
 from BeautifulSoup import BeautifulStoneSoup
 from nltk.tokenize import sent_tokenize
@@ -58,6 +59,19 @@ class Mutation(models.Model):
     def __unicode__(self):
         
         return '%s:%s' % (self.Mut, str(self.Gene))
+
+    def GetEffect(self):
+        if InteractionEffect.objects.filter(Mutation = self).exists():
+            return InteractionEffect.objects.filter(Mutation = self)[0]
+        else:
+            return None
+
+    def GetLabelUrl(self):
+        
+        if self.sentence_set.exists():
+            return reverse('LabelNewMutation',
+                           kwargs = {'SentID': self.sentence_set.all()[0].id,
+                                     'MutID': self.id})
 
 
 
