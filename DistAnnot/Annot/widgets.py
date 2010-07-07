@@ -23,6 +23,25 @@ def MakeList(mapping, qset, location):
     with open(location) as handle:
         return handle.read()
 
+def MakeString(name, json_obj):
+
+    outstr = mark_safe(u'''<script type="text/javascript">
+            jQuery("#id_%(name)s").autocomplete(%(json)s, {
+                width: 700,
+                max: 10,
+                highlight: false,
+                multiple: true,
+                multipleSeparator: ", ",
+                scroll: true,
+                scrollHeight: 300,
+                matchContains: true,
+                autoFill: true,
+            });
+            </script>''' % {'name':name, 'json':json_obj})
+
+    return outstr
+
+
 
 
 class AutoCompleteTagInput(forms.TextInput):
@@ -45,19 +64,7 @@ class AutoCompleteTagInput(forms.TextInput):
         mapping = self.attrs['mapping']
         json_data = MakeList(mapping, qset, os.path.join(settings.STATIC_FILE_ROOT,
                                              'data', 'gene_names.json'))
-        return output + mark_safe(u'''<script type="text/javascript">
-            jQuery("#id_%s").autocomplete(%s, {
-                width: 700,
-                max: 10,
-                highlight: false,
-                multiple: true,
-                multipleSeparator: ", ",
-                scroll: true,
-                scrollHeight: 300,
-                matchContains: true,
-                autoFill: true,
-            });
-            </script>''' % (name, json_data))
+        return output +  MakeString(name, json_data)
 
 class AutoCompleteTagInputLarge(forms.Textarea):
     class Media:
@@ -79,16 +86,4 @@ class AutoCompleteTagInputLarge(forms.Textarea):
         mapping = self.attrs['mapping']
         json_data = MakeList(mapping, qset, os.path.join(settings.STATIC_FILE_ROOT,
                                              'data', 'gene_names.json'))
-        return output + mark_safe(u'''<script type="text/javascript">
-            jQuery("#id_%s").autocomplete(%s, {
-                width: 700,
-                max: 10,
-                highlight: false,
-                multiple: true,
-                multipleSeparator: ", ",
-                scroll: true,
-                scrollHeight: 300,
-                matchContains: true,
-                autoFill: true,
-            });
-            </script>''' % (name, json_data))
+        return output +  MakeString(name, json_data)
