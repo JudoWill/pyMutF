@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% if has_next %}
+<h4><a href="?page={{ previous }}">Previous Page</a></h4>
+{% endif %}
 <table>
 {% for mut in object_list %}
 <tr>
@@ -13,7 +16,12 @@
 </tr>
 {% endfor %}
 </table>
-
+{% if has_next %}
+<h4><a href="?page={{ previous }}">Previous Page</a></h4>
+{% endif %}
+{% if has_next %}
+<h4><a href="?page={{ next }}">Next</a></h4>
+{% endif %}
 
 
 {% endblock %}

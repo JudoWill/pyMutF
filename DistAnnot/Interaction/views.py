@@ -43,7 +43,8 @@ def mutation_list(request):
     response = list_detail.object_list(
         request,
         queryset = Mutation.objects.all().order_by('Mut', '-Interaction'),
-        template_name = 'Interaction/Mutation_list.html'
+        template_name = 'Interaction/Mutation_list.html',
+        paginate_by = 50
     )
 
     return response
