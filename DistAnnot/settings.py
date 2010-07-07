@@ -87,8 +87,6 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     os.path.abspath('templates')
-#'/home/will/pyMutF/DistAnnot/templates/',
-#	'/Users/will/pyMutF/DistAnnot/templates/'
 )
 
 INSTALLED_APPS = (
@@ -110,6 +108,7 @@ INSTALLED_APPS = (
 LOGIN_REDIRECT_URL = '/index.html'
 LOGIN_URL = 'login.html'
 HOME_DIR = os.path.realpath('')
+CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
 
 try:
 	from local_settings import *

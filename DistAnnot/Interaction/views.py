@@ -5,6 +5,7 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.views.generic import list_detail
+from django.views.decorators.cache import cache_page, never_cache
 # Create your views here.
 
 from DistAnnot.Interaction.models import *
@@ -17,6 +18,7 @@ def index(request):
     return render_to_response('index.html', 
 			context_instance = RequestContext(request))
 
+@cache_page(10)
 @login_required
 def stats(request):
 
@@ -35,7 +37,7 @@ def stats(request):
 
     return render_to_response('Interaction/stats.html', cdict,
                               context_instance = RequestContext(request))
-
+@never_cache
 def mutation_list(request):
 
     response = list_detail.object_list(

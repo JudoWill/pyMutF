@@ -12,6 +12,7 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.template.defaultfilters import slugify
 from django.db import IntegrityError
+from django.views.decorators.cache import never_cache
 
 from forms import AnnotForm, InteractionEffectForm
 from django.db.models import Count
@@ -19,7 +20,7 @@ from django.db.models import Count
 from random import randint
 from DistAnnot.CreateOrder import UpdatePriority
 
-
+@never_cache
 @login_required
 def LabelMutation(request, SentID = None, MutID = None):
     """A view to display the Mutation and sentence for annotation"""
