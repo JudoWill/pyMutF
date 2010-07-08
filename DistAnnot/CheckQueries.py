@@ -45,7 +45,7 @@ def CreateQueries(rule):
 def DoQuery(rule, pmid_pmc, semaphore, MutFinder):
 
     with semaphore:
-        pmids = rule.DoQuery(USE_RECENT = False)
+        pmids = rule.DoQuery(USE_RECENT = True)
 
     rule.LastChecked = datetime.datetime.now()
     rule.save()
