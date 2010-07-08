@@ -27,7 +27,7 @@ def MakeList(mapping, qset, location):
 def MakeString(name, json_obj):
 
     outstr = mark_safe(u'''<script type="text/javascript">
-            jQuery("#id_%(name)s").autocomplete("%(json)s", {
+            jQuery("#id_%(name)s").autocomplete(%(json)s, {
                 width: 700,
                 max: 10,
                 highlight: false,
