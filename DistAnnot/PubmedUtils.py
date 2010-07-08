@@ -3,7 +3,7 @@ import logging, logging.handlers
 from DistAnnot.ensure_ascii import unicode_to_ascii
 import PyMozilla
 import re
-from datetime import date
+from datetime import datetime
 from BeautifulSoup import BeautifulStoneSoup
 from itertools import islice
 from DistAnnot.process import TimedSemaphore
@@ -94,11 +94,11 @@ def SearchPUBMED(search_sent, recent_date = None, BLOCK_SIZE = 100000, START = 0
     moz_emu = PyMozilla.MozillaEmulator(cacher = None)
 
     search_term = search_sent.replace(' ', '%20')
-    search_term = search_sent.replace('-', '%20')
-    search_term = search_sent.replace('+', '%20')
+    search_term = search_term.replace('-', '%20')
+    search_term = search_term.replace('+', '%20')
     search_url = POST_URL + '&term=' + search_term
     if recent_date:
-        time_delta = date.today()-recent_date
+        time_delta = datetime.today()-recent_date
         search_url += '&reldate=' + str(time_delta.days)
     
     xml_data = moz_emu.download(search_url, trycount = 3)

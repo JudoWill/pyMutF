@@ -198,7 +198,7 @@ def main():
             pmid_pmc[row['PMID']] = row['PMCID']
 
     print 'Doing actual queries'
-    for query in Query.objects.filter(LastChecked__isnull = True).order_by('-DateAdded'):
+    for query in Query.objects.order_by('-DateAdded'):
         DoQuery(query, pmid_pmc, EUtilsSem, MutFinder)
 
     GetPubMed(MutFinder, EUtilsSem)
