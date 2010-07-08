@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.core.cache import cache
+import django.db.transaction
 
 from DistAnnot.PubmedUtils import *
 from BeautifulSoup import BeautifulStoneSoup
@@ -61,6 +62,21 @@ class Mutation(models.Model):
     def __unicode__(self):
         
         return '%s:%s' % (self.Mut, str(self.Gene))
+
+    @django.db.transaction.commit_on_success
+    def JoinMuts(self, *args):
+
+        for mut in args:
+            assert self.Mut == mut.Mut, 'Mutations do not match!!'
+            assert self.Gene == mut.Gene, 'Genes do mot match!!'
+
+            effects = InteractionEffect.objects.filter(Mutation = mut)
+            for effect in effects:
+                effect.Mutation = self
+                effect.save()
+
+            mut.delete()
+            
 
     def GetEffect(self):
 
