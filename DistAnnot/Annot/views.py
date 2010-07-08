@@ -9,10 +9,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import *
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.template.defaultfilters import slugify
 from django.db import IntegrityError
-from django.views.decorators.cache import never_cache
+from django.views.decorators.cache import never_cache, cache_page
+from django.utils import simplejson
 
 from forms import AnnotForm, InteractionEffectForm
 from django.db.models import Count
@@ -162,3 +163,25 @@ def GetRandomSent():
     UpdatePriority(sent)
 
     return sent
+
+
+#@cache_page(60 * 60)
+def gene_list(request, q = None):
+
+    def MakeList(gene_qset, extra_qset):
+        tlist = []
+        for item in gene_qset:
+            tlist.append('GN:'+item)
+        for item in extra_qset:
+            tlist.append('ON:'+item)
+        return tlist
+
+    print request.GET
+    ids = request.GET.get('q', None)
+    print ids
+    gene_query = Gene.objects.filter(Name__icontains = ids).values_list('Name', flat = True)
+    extra_names = ExtraGeneName.objects.filter(Name__icontains = ids).values_list('Name', flat = True)
+    print gene_query.count(), extra_names.count()
+    l = MakeList(gene_query, extra_names)
+    print l
+    return HttpResponse(simplejson.dumps(l)[1:-1], mimetype='application/javascript')

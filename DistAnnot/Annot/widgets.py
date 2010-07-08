@@ -2,6 +2,7 @@ from django import forms
 from django.conf import settings
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
+from django.core.urlresolvers import reverse
 from types import ListType
 import os.path
 
@@ -26,7 +27,7 @@ def MakeList(mapping, qset, location):
 def MakeString(name, json_obj):
 
     outstr = mark_safe(u'''<script type="text/javascript">
-            jQuery("#id_%(name)s").autocomplete(%(json)s, {
+            jQuery("#id_%(name)s").autocomplete("%(json)s", {
                 width: 700,
                 max: 10,
                 highlight: false,
@@ -64,6 +65,7 @@ class AutoCompleteTagInput(forms.TextInput):
         mapping = self.attrs['mapping']
         json_data = MakeList(mapping, qset, os.path.join(settings.STATIC_FILE_ROOT,
                                              'data', 'gene_names.json'))
+        #json_data = reverse('gene_list')
         return output +  MakeString(name, json_data)
 
 class AutoCompleteTagInputLarge(forms.Textarea):
@@ -86,4 +88,5 @@ class AutoCompleteTagInputLarge(forms.Textarea):
         mapping = self.attrs['mapping']
         json_data = MakeList(mapping, qset, os.path.join(settings.STATIC_FILE_ROOT,
                                              'data', 'gene_names.json'))
+        #json_data = reverse('gene_list')
         return output +  MakeString(name, json_data)
