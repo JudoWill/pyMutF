@@ -75,6 +75,8 @@ class Mutation(models.Model):
                 effect.Mutation = self
                 effect.save()
 
+            for sent in mut.sentence_set.all():
+                self.sentence_set.add(sent)
             mut.delete()
             
 
