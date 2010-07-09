@@ -58,6 +58,7 @@ class Mutation(models.Model):
     Mut = models.CharField(max_length = 20)
     Gene = models.ForeignKey('Gene', blank = True, null = True)
     Interaction = models.ManyToManyField(Interaction, through = 'InteractionEffect')
+    Position = models.IntegerField(default = None, null = True)
 
     def __unicode__(self):
         
