@@ -108,6 +108,14 @@ class Mutation(models.Model):
             cache.set('muturl-%i' % self.pk, url, 30 * 60)
         return url
 
+    def GetArticles(self):
+
+        arts = []
+        for sent in self.sentence_set.all():
+            arts += [sent.Article.id]
+
+        return Article.objects.filter(id__in = arts)
+
 
 
 class InteractionEffect(models.Model):
