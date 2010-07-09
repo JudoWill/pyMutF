@@ -68,7 +68,7 @@ def mutation_search(request):
 
 
                 valid_muts = Mutation.objects.filter(Position__gte = int(row['Start']))
-                valid_muts = valid_muts.exclude(Position__lte = int(row['Stop']))
+                valid_muts = valid_muts.filter(Position__lte = int(row['Stop']))
 
                 if form.cleaned_data['allow']:
                     valid_muts = valid_muts.filter(Q(Gene__Entrez = int(row['Entrez'])) or Q(Gene__isnull = True))
