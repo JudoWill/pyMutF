@@ -13,12 +13,14 @@
 
 {% for mut in line.Mutations %}
 <tr>
-<td>{{ line.Gene }}</td>
+{% for label in line.labels.values %}
+<td>{{ label }}</td>
+{% endfor %}
 <td>{{ line.Position|first }}</td>
 <td>{{ line.Position|last }}</td>
+<td>{{ line.Gene.Name|default:"Unlabeled" }}</td>
 <td><a href="{{ mut.GetLabelUrl }}">{{ mut.Mut }}</a></td>
-<td>{{ mut.Gene.Name }}</td>
-<td>{{ mut.GetEffect.Slug }}</td>
+<td>{{ mut.GetEffect.EffectType.Slug }}</td>
 <td>{{ mut.Interaction.latest.HIVGene.Name }}</td>
 <td>{{ mut.Interaction.latest.InteractionType.Type }}</td>
 <td>{{ mut.Interaction.latest.HumanGene.Name }}</td>

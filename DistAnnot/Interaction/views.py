@@ -62,9 +62,12 @@ def mutation_search(request):
         if form.is_valid():
 
             handle = StringIO(form.cleaned_data['lines'])
-            
+            headers = handle.next().strip().split(',')
+            print headers[0]
+            req = set(['Entrez', 'Start', 'Stop'])
+            extra_headers = set(headers) - req
             good_lines = []
-            for row in DictReader(handle, fieldnames = ('Entrez', 'Start', 'Stop')):
+            for row in DictReader(handle, fieldnames = headers):
 
 
                 valid_muts = Mutation.objects.filter(Position__gte = int(row['Start']))
@@ -79,7 +82,10 @@ def mutation_search(request):
                         gene = Gene.objects.get(Entrez = int(row['Entrez']))
                     except MultipleObjectsReturned:
                         gene = Gene.objects.filter(Entrez = int(row['Entrez']))[0]
-                    good_lines.append({'Gene':gene,
+
+
+
+                    good_lines.append({'Gene':gene, 'labels':dict(map(lambda x: (x,row[x]), extra_headers)),
                                        'Position':(row['Start'], row['Stop']),
                                         'Mutations':valid_muts})
 
