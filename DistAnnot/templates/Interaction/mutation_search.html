@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<p>This form can be used to search the mutation list. Cut & Paste a list of genes and mutations. Use the Entrez-ID, start and stop positions in csv format.</p>
+<form action="" method="post" >{% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value="Submit"/>
+</form>
+{% if good_lines %}
+<h3>Results</h3>
+<table>
+{% for line in good_lines %}
+
+{% for mut in line.Mutations %}
+<tr>
+<td>{{ line.Gene }}</td>
+<td>{{ line.Position|first }}</td>
+<td>{{ line.Position|last }}</td>
+<td><a href="{{ mut.GetLabelUrl }}">{{ mut.Mut }}</a></td>
+<td>{{ mut.Gene.Name }}</td>
+<td>{{ mut.GetEffect.Slug }}</td>
+<td>{{ mut.Interaction.latest.HIVGene.Name }}</td>
+<td>{{ mut.Interaction.latest.InteractionType.Type }}</td>
+<td>{{ mut.Interaction.latest.HumanGene.Name }}</td>
+</tr>
+{% endfor %}
+
+{% endfor %}
+</table>
+{% endif %}
+
+
+{% endblock %}
