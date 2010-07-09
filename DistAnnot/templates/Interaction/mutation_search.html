@@ -24,6 +24,7 @@
 <td>{{ mut.Interaction.latest.HIVGene.Name }}</td>
 <td>{{ mut.Interaction.latest.InteractionType.Type }}</td>
 <td>{{ mut.Interaction.latest.HumanGene.Name }}</td>
+<td>{% for art in mut.GetArticles %}{{ art.PMID }}|{% endfor %}</td>
 </tr>
 {% endfor %}
 
