@@ -65,7 +65,7 @@ def mutation_search(request):
             headers = handle.next().strip().split(',')
             print headers[0]
             req = set(['Entrez', 'Start', 'Stop'])
-            extra_headers = set(headers) - req
+            extra_headers = list(set(headers) - req)
             good_lines = []
             for row in DictReader(handle, fieldnames = headers):
 
@@ -92,11 +92,16 @@ def mutation_search(request):
             context = {
                 'form':form,
                 'good_lines':good_lines,
+                'extra_headers':extra_headers
 
             }
-
-            return render_to_response('Interaction/mutation_search.html', context,
-                                      context_instance = RequestContext(request))
+            if form.cleaned_data['csv_format']:
+                return render_to_response('Interaction/mutation_results.csv', context,
+                                          context_instance = RequestContext(request),
+                                          mimetype='application/csv')
+            else:
+                return render_to_response('Interaction/mutation_search.html', context,
+                                          context_instance = RequestContext(request))
     else:
         form = MutationSearch()
 

@@ -10,3 +10,4 @@ from DistAnnot.Interaction.widgets import *
 class MutationSearch(forms.Form):
     lines = forms.CharField(widget = forms.Textarea, label = 'Query')
     allow = forms.BooleanField(required = False, label = 'Allow Unlabeled?')
+    csv_format = forms.BooleanField(required = False, label = 'Return as CSV format')

@@ -1,0 +1,4 @@
+{% for header in extra_headers %}{{header}},{% endfor %}Position-Start,Position-End,Gene,Mutation,Effect,HIVGene,Interaction,HumanGene,Articles
+{% for line in good_lines %}{% for mut in line.Mutations %}
+{% for label in line.labels.values %}"{{label}}",{% endfor %}{{line.Position|join:","}},{{ line.Gene.Name|default:"Unlabeled" }},{{ mut.Mut }},{{ mut.GetEffect.EffectType.Slug }},{{ mut.Interaction.latest.HIVGene.Name }},{{ mut.Interaction.latest.InteractionType.Type }},{{ mut.Interaction.latest.HumanGene.Name }},{% for art in mut.GetArticles %}{{ art.PMID }}|{% endfor %}{% endfor %}
+{% endfor %}
