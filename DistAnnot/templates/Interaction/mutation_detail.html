@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+
+{% block subtitle %}Mutation Detail{% endblock %}
+
+{% block content %}
+<h4>{{ object.Mut }}</h4>
+
+<p>Gene: {{ object.Gene.Name|default:"Unknown!!" }}</p>
+
+<h3>Articles</h3>
+{% for sent in object.sentence_set.all %}
+<h4>{{ sent.Article.Title }}</h4>
+<p><a href="{{ sent.Article.get_absolute_url }}">{{ sent.Article.PMID }}</a></p>
+<p>{{ sent.Text }}</p>
+{% endfor %}
+
+{% if object.Gene %}
+{% else %}
+<p>This mutation is UNLABELED.  Help us out and go here to <a href="{{ object.GetLabelUrl }}">label it</a>!</p>
+{% endif %}
+
+
+{% endblock %}

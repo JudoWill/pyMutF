@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.views.generic import list_detail
 from django.views.decorators.cache import cache_page, never_cache
-from csv import DictReader
+from csv import DictReader, DictWriter
 from StringIO import StringIO
 from copy import deepcopy
 # Create your views here.
@@ -16,6 +16,7 @@ from DistAnnot.Interaction.models import *
 from DistAnnot.Annot.models import *
 from DistAnnot.Queries.models import *
 from DistAnnot.Interaction.forms import *
+from django.http import HttpResponse
 
 
 def index(request):
@@ -49,7 +50,7 @@ def mutation_list(request):
         request,
         queryset = Mutation.objects.all().order_by('Gene', 'Position', 'Mut', '-Interaction'),
         template_name = 'Interaction/Mutation_list.html',
-        paginate_by = 50
+        paginate_by = 500
     )
 
     return response
@@ -99,7 +100,7 @@ def mutation_search(request):
             if form.cleaned_data['csv_format']:
                 resp = HttpResponse()
                 resp['Content-Disposition'] = 'attachment; filename=mutation_results.csv'
-                MakeSCSV(good_lines, resp)
+                MakeCSV(good_lines, resp)
                 return resp
             else:
                 return render_to_response('Interaction/mutation_search.html', context,
@@ -124,7 +125,7 @@ def MakeCSV(good_lines, response_obj):
 	writer = DictWriter(response_obj, field_names)
 	for line in good_lines:
 		for mut in line.Mutations:
-			val_dict = {line.labels.items()}
+			val_dict = dict(line.labels.items())
 			val_dict['Start-Pos'] = line.Positions[0]
 			val_dict['End-Pos'] = line.Postions[1]
 			val_dict['Gene-Name'] = line.Gene.Name or 'Unlabeled'

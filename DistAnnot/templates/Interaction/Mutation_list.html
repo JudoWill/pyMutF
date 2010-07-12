@@ -7,12 +7,12 @@
 <table>
 {% for mut in object_list %}
 <tr>
-<td><a href="{{ mut.GetLabelUrl }}">{{ mut.Mut }}</a></td>
-<td>{{ mut.Gene.Name }}</td>
-<td>{{ mut.GetEffect.Slug }}</td>
-<td>{{ mut.Interaction.latest.HIVGene.Name }}</td>
-<td>{{ mut.Interaction.latest.InteractionType.Type }}</td>
-<td>{{ mut.Interaction.latest.HumanGene.Name }}</td>
+<td><a href="{{ mut.get_absolute_url }}">{{ mut.Mut }}</a></td>
+<td>{{ mut.Gene.Name|default:"Unknown" }}</td>
+<td>{{ mut.GetEffect.Slug|default:"Unlabeled" }}</td>
+<td>{{ mut.Interaction.latest.HIVGene.Name|default:"None" }}</td>
+<td>{{ mut.Interaction.latest.InteractionType.Type|default:"None" }}</td>
+<td>{{ mut.Interaction.latest.HumanGene.Name|default:"None" }}</td>
 </tr>
 {% endfor %}
 </table>

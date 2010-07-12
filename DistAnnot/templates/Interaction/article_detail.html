@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block subtitle %}Article Detail{% endblock %}
+{% block content %}
+<h4>{{ object.Title }}</h4>
+<p>{{ object.Abstract }}</p>
+<p>{{ object.PMID }}</p>
+
+{% if object.sentence_set.all %}
+<h4>Mutations Mentioned</h4>
+
+{% for sent in object.sentence_set.all %}
+<p>{{ sent.Text }}</p>
+{% for mut in sent.Mutation.all %}
+<li><a href="{{ mut.get_absolute_url }}">{{ mut.Mut }}</a> on Gene: {{ mut.Gene.Name|default:"Unknown" }}</li>
+{% endfor %}
+{% endfor %}
+{% else %}
+<p>No Mutations mentioned!</p>
+{% endif %}
+<p></p>
+{% if object.Interactions.all %}
+<h4>Interactions Mentioned</h4>
+{% for inter in object.Interactions.all %}
+<li>{{ inter.HIVGene.Name }} {{ inter.InteractionType.Type }} {{ inter.HumanGene.Name }}</li>
+{% endfor %}
+{% else %}
+<h4>No Interactions Mentioned!</h4>
+{% endif %}
+
+{% endblock %}

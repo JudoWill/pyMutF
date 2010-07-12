@@ -64,6 +64,11 @@ class Mutation(models.Model):
         
         return '%s:%s' % (self.Mut, str(self.Gene))
 
+    def get_absolute_url(self):
+
+        return reverse('mutation_detail', kwargs = {'object_id':self.pk})
+
+
     @django.db.transaction.commit_on_success
     def JoinMuts(self, *args):
 
@@ -195,7 +200,7 @@ class Article(models.Model):
         
         return 'PMID:%d' % self.PMID
     def get_absolute_url(self):
-    	return reverse('article_detail', kwargs = {'object_id':selk.pk})
+    	return reverse('article_detail', kwargs = {'object_id':self.pk})
     
 
     def GetPubMedXML(self, cache_only = False):
