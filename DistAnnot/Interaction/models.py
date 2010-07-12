@@ -194,6 +194,9 @@ class Article(models.Model):
     def __unicode__(self):
         
         return 'PMID:%d' % self.PMID
+    def get_absolute_url(self):
+    	return reverse('article_detail', kwargs = {'object_id':selk.pk})
+    
 
     def GetPubMedXML(self, cache_only = False):
         if self.PubMedXML is None and not cache_only:
