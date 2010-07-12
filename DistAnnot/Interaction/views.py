@@ -1,7 +1,6 @@
-from django.shortcuts import render_to_response
-from django.utils.translation import ugettext as _
-from django.conf import settings
-from django.db.models import Q
+from django.shortcuts import render_to_response, get_object_or_404
+from django.forms.formsets import formset_factory
+from django.forms.models import inlineformset_factory
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
@@ -9,14 +8,15 @@ from django.views.generic import list_detail
 from django.views.decorators.cache import cache_page, never_cache
 from csv import DictReader, DictWriter
 from StringIO import StringIO
-from copy import deepcopy
-# Create your views here.
-
 from DistAnnot.Interaction.models import *
 from DistAnnot.Annot.models import *
 from DistAnnot.Queries.models import *
 from DistAnnot.Interaction.forms import *
 from django.http import HttpResponse
+
+# Create your views here.
+from django.template.defaultfilters import slugify
+from django.template.defaultfilters import slugify
 
 
 def index(request):
@@ -54,6 +54,33 @@ def mutation_list(request):
     )
 
     return response
+
+
+def TagMutation(request, object_id = None):
+
+    mut = get_object_or_404(Mutation, pk = int(object_id))
+    TagFormset = inlineformset_factory(MutationTag, Mutation, extra = 5)
+
+    if request.method == 'POST':
+        formset = TagFormset(request.POST)
+        if formset.is_valid():
+            formset.save()
+        return reverse('mutation_detail', kwargs = {'object_id':mut.pk})
+    else:
+        formset = TagFormset(instance = mut)
+    
+    context_dict = {
+        'formset':formset,
+        'object':mut,
+    }
+
+    return render_to_response('Interaction/tag_mutation.html', context_dict,
+                              context_instance = RequestContext(request))
+
+
+
+
+
 
 def mutation_search(request):
 

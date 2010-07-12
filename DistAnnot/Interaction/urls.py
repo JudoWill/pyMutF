@@ -23,5 +23,5 @@ urlpatterns = patterns('',
      url(r'^mutation_search.html', 'Interaction.views.mutation_search', name = 'mutation_search'),
      url(r'^article/(?P<object_id>\d*)/detail.html', list_detail.object_detail, article_info, name = 'article_detail'),
      url(r'^mutation/(?P<object_id>\d*)/detail.html', list_detail.object_detail, mutation_info, name = 'mutation_detail'),
-
+     url(r'^mutation/(?P<object_id>\d*)/tag.html', 'Interaction.views.TagMutation', name = 'mutation_tag'),
 )

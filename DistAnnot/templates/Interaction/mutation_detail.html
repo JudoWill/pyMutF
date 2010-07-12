@@ -20,5 +20,11 @@
 <p>This mutation is UNLABELED.  Help us out and go here to <a href="{{ object.GetLabelUrl }}">label it</a>!</p>
 {% endif %}
 
+{% block TagForm %}
+{% for desc in object.Descriptions.all %}
+<li>{{ desc.Slug }}</li>
+{% endfor %}
+<p>Click <a href="{% url mutation_tag object_id=object.id %}">here</a> to update the descriptions!</p>
+{% endblock %}
 
 {% endblock %}

@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from django import forms
 from DistAnnot.Annot.models import MutationAnnot
-from DistAnnot.Interaction.models import Gene, InteractionType, EffectType
+from DistAnnot.Interaction.models import *
 from DistAnnot.Interaction.widgets import *
 
 
@@ -13,5 +13,7 @@ class MutationSearch(forms.Form):
     csv_format = forms.BooleanField(required = False, label = 'Return as CSV format')
 
 
-class MutationTag(forms.Form):
-    Slug = forms.SlugField()
+class MutationTag(ModelForm):
+
+    class Meta:
+        model = MutationTags
