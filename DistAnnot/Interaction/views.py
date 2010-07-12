@@ -135,8 +135,7 @@ def MakeCSV(good_lines, response_obj):
 			val_dict['HumanGene'] = mut.Interaction.latest.HumanGene.Name
 			val_dict['Articles'] = '|'.join(map(lambda x: x.PMID, mut.GetArticles()))
 			writer.writerow(val_dict)
-	
-	
+		
 			
 	
 	
