@@ -216,6 +216,22 @@ class Article(models.Model):
 
         return self.PMCXML
 
+    def GetTitle(self):
+
+        if self.Title is None:
+            xml = self.PubMedXML or self.PMCXML or None
+            if xml is None:
+                return None
+
+            soup = BeautifulStoneSoup(xml)
+            title = soup.find('articletitle')
+            if title:
+                self.Title = title.string.strip()
+        return self.Title
+
+
+
+
     def ReadMuts(self, MutFinder = None):
 
         if MutFinder is None:
