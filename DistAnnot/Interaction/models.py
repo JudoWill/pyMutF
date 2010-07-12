@@ -189,6 +189,7 @@ class Article(models.Model):
     PMCXML = models.XMLField(null = True, default = None)
     HasMut = models.NullBooleanField(default = None)
     Interactions = models.ManyToManyField(Interaction)
+    Title = models.TextField(null = True, default = None)
 
     def __unicode__(self):
         
