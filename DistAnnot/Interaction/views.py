@@ -9,6 +9,7 @@ from django.views.generic import list_detail
 from django.views.decorators.cache import cache_page, never_cache
 from csv import DictReader
 from StringIO import StringIO
+from copy import deepcopy
 # Create your views here.
 
 from DistAnnot.Interaction.models import *
@@ -96,9 +97,10 @@ def mutation_search(request):
 
             }
             if form.cleaned_data['csv_format']:
-                return render_to_response('Interaction/mutation_results.csv', context,
-                                          context_instance = RequestContext(request),
-                                          mimetype='application/csv')
+                resp = HttpResponse()
+                resp['Content-Disposition'] = 'attachment; filename=mutation_results.csv'
+                MakeSCSV(good_lines, resp)
+                return resp
             else:
                 return render_to_response('Interaction/mutation_search.html', context,
                                           context_instance = RequestContext(request))
@@ -113,3 +115,30 @@ def mutation_search(request):
     return render_to_response('Interaction/mutation_search.html', context,
                                 context_instance = RequestContext(request))
 
+def MakeCSV(good_lines, response_obj):
+	
+	line_dicts = []
+	field_names = line.labels.keys() + ['Start-Pos', 'End-Pos', 'Gene-Name', 'Mutation',
+										'Effect-Type', 'HIVGene', 'Interaction-Type',
+										'HumanGene', 'Articles']
+	writer = DictWriter(response_obj, field_names)
+	for line in good_lines:
+		for mut in line.Mutations:
+			val_dict = {line.labels.items()}
+			val_dict['Start-Pos'] = line.Positions[0]
+			val_dict['End-Pos'] = line.Postions[1]
+			val_dict['Gene-Name'] = line.Gene.Name or 'Unlabeled'
+			val_dict['Mutation'] = mut.Mut
+			val_dict['Effect-Type'] = mut.GetEffect.EffectType.Slug
+			val_dict['HIVGene'] = mut.Interaction.latest.HIVGene.Name
+			val_dict['Interaction-Type'] = mut.Interaction.latest.InteractionType.Type
+			val_dict['HumanGene'] = mut.Interaction.latest.HumanGene.Name
+			val_dict['Articles'] = '|'.join(map(lambda x: x.PMID, mut.GetArticles()))
+			writer.writerow(val_dict)
+	
+	
+			
+	
+	
+	
+	
