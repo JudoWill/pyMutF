@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response, get_object_or_404
 from django.forms.formsets import formset_factory
-from django.forms.models import inlineformset_factory
+from django.forms.models import inlineformset_factory, modelformset_factory
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
@@ -57,17 +57,22 @@ def mutation_list(request):
 
 
 def TagMutation(request, object_id = None):
-
+    print object_id
     mut = get_object_or_404(Mutation, pk = int(object_id))
-    TagFormset = inlineformset_factory(MutationTag, Mutation, extra = 5)
+    TagFormset = formset_factory(MutationTagForm, extra = 5, can_delete = True)
 
     if request.method == 'POST':
         formset = TagFormset(request.POST)
         if formset.is_valid():
-            formset.save()
+            for form in formset.forms:
+                obj, isnew = MutationTags.objects.get_or_create(Slug = form.cleaned_data['Slug'],
+                                                         default = {'Description':form.cleaned_data['Descriptions']})
+
+                mut.Descriptions.add(obj)
         return reverse('mutation_detail', kwargs = {'object_id':mut.pk})
     else:
-        formset = TagFormset(instance = mut)
+        initial = mut.Descriptions.values('Slug', 'Description')
+        formset = TagFormset(initial = initial)
     
     context_dict = {
         'formset':formset,
