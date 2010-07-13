@@ -66,7 +66,7 @@ def TagMutation(request, object_id = None):
         if formset.is_valid():
             for form in formset.forms:
                 obj = MutationTags(Slug = form.cleaned_data['Slug'],
-                                   Description = form.cleaned_data['Descriptions'])
+                                   Description = form.cleaned_data['Description'])
                 obj.save()
 
                 mut.Descriptions.add(obj)

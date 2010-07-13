@@ -17,6 +17,4 @@ class MutationTagForm(forms.Form):
 
     Slug = forms.SlugField()
     Description = forms.CharField(widget = forms.Textarea)
-    class Meta:
-        model = MutationTags
-        fields = ('Slug', 'Description')
+
