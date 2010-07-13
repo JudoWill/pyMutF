@@ -9,13 +9,9 @@
 <tr>
 <td><a href="{{ mut.get_absolute_url }}">{{ mut.Mut }}</a></td>
 <td>{{ mut.Gene.Name|default:"Unknown" }}</td>
-{% if mut.Descriptions %}
-<td>{% for desc in mut.Descriptions.all %}{{ desc.Slug }}{% endfor %}</td>
-{% else %}
-<td>No Descriptions!</td>
-{% endif %}
-{% if mut.Interaction %}
-<td>{{ mut.GetEffect.Slug|default:"Unlabeled" }}</td>
+<td>{% for desc in mut.Descriptions.all %}{{ desc.Slug }}{% empty %}No Descriptions!!!{% endfor %}</td>
+{% if mut.Interaction.exists %}
+<td>{{ mut.GetEffect.Slug|default:"No Effect" }}</td>
 <td>{{ mut.Interaction.latest.HIVGene.Name|default:"None" }}</td>
 <td>{{ mut.Interaction.latest.InteractionType.Type|default:"None" }}</td>
 <td>{{ mut.Interaction.latest.HumanGene.Name|default:"None" }}</td>
