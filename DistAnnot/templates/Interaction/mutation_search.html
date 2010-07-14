@@ -19,7 +19,11 @@
 <td>{{ line.Position|first }}</td>
 <td>{{ line.Position|last }}</td>
 <td>{{ line.Gene.Name|default:"Unlabeled" }}</td>
+{% if line.Gene.Name %}
+<td><a href="{{ mut.get_absolute_url }}">{{ mut.Mut }}</a></td>
+{% else %}
 <td><a href="{{ mut.GetLabelUrl }}">{{ mut.Mut }}</a></td>
+{% endif %}
 <td>{% for desc in mut.Descriptions.all %}{{ desc.Slug }}{% empty %}No Descriptions!!!{% endfor %}</td>
 {% if mut.Interaction.exists %}
 <td>{{ mut.GetEffect.Slug|default:"No Effect" }}</td>
