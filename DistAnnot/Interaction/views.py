@@ -66,15 +66,15 @@ def TagMutation(request, object_id = None):
             print 'is valid'
             for form in formset.forms:
                 tags = form.cleaned_data['Tags']
-                print 'outside:', len(tags)
-                art = Article.objects.get(pk = form.cleaned_data['Article'])
-                for tag in tags:
-                    try:
-                        obj, isnew = Reference.objects.get_or_create(Article = art,
-                                                                    Mutation = mut,
-                                                                    Tag = tag)
-                    except MultipleObjectsReturned:
-                        continue
+                if tags:
+                    art = Article.objects.get(pk = form.cleaned_data['Article'])
+                    for tag in tags:
+                        try:
+                            obj, isnew = Reference.objects.get_or_create(Article = art,
+                                                                        Mutation = mut,
+                                                                        Tag = tag)
+                        except MultipleObjectsReturned:
+                            continue
             return HttpResponseRedirect(reverse('mutation_detail', kwargs = {'object_id':mut.pk}))
         else:
             print 'not valid!!'
