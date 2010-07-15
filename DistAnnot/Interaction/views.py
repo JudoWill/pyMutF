@@ -6,18 +6,17 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.views.generic import list_detail
 from django.views.decorators.cache import cache_page, never_cache
-from csv import DictReader, DictWriter
-from StringIO import StringIO
 from DistAnnot.Interaction.models import *
 from DistAnnot.Annot.models import *
 from DistAnnot.Queries.models import *
 from DistAnnot.Interaction.forms import *
 from django.http import HttpResponse, HttpResponseRedirect
-
+from csv import DictReader, DictWriter
+from StringIO import StringIO
+from copy import deepcopy
+from operator import itemgetter
+from collections import defaultdict
 # Create your views here.
-from django.template.defaultfilters import slugify
-from django.template.defaultfilters import slugify
-
 
 def index(request):
 
@@ -138,16 +137,23 @@ def mutation_search(request):
                                        'Position':(row['Start'], row['Stop']),
                                         'Mutations':valid_muts})
 
+            order = ('Gene-Name', 'Mutation')
+            dict_list, field_names = MakeDictList(good_lines, order = order)
+
             context = {
                 'form':form,
-                'good_lines':good_lines,
-                'extra_headers':extra_headers
-
+                'good_lines':dict_list,
+                'extra_headers':extra_headers,
+                'field_names':field_names
             }
             if form.cleaned_data['csv_format']:
                 resp = HttpResponse()
                 resp['Content-Disposition'] = 'attachment; filename=mutation_results.csv'
-                MakeCSV(good_lines, resp)
+
+                writter = DictWriter(resp, field_names, for_csv = True)
+                for line in dict_list:
+                    writter.writerow(line)
+
                 return resp
             else:
                 return render_to_response('Interaction/mutation_search.html', context,
@@ -163,27 +169,63 @@ def mutation_search(request):
     return render_to_response('Interaction/mutation_search.html', context,
                                 context_instance = RequestContext(request))
 
-def MakeCSV(good_lines, response_obj):
-	
-	line_dicts = []
-	field_names = line.labels.keys() + ['Start-Pos', 'End-Pos', 'Gene-Name', 'Mutation',
-										'Effect-Type', 'HIVGene', 'Interaction-Type',
-										'HumanGene', 'Articles']
-	writer = DictWriter(response_obj, field_names)
-	for line in good_lines:
-		for mut in line.Mutations:
-			val_dict = dict(line.labels.items())
-			val_dict['Start-Pos'] = line.Positions[0]
-			val_dict['End-Pos'] = line.Postions[1]
-			val_dict['Gene-Name'] = line.Gene.Name or 'Unlabeled'
-			val_dict['Mutation'] = mut.Mut
-			val_dict['Effect-Type'] = mut.GetEffect.EffectType.Slug
-			val_dict['HIVGene'] = mut.Interaction.latest.HIVGene.Name
-			val_dict['Interaction-Type'] = mut.Interaction.latest.InteractionType.Type
-			val_dict['HumanGene'] = mut.Interaction.latest.HumanGene.Name
-			val_dict['Articles'] = '|'.join(map(lambda x: x.PMID, mut.GetArticles()))
-			writer.writerow(val_dict)
-		
+def MakeDictList(good_lines, order = None, for_csv = False):
+
+    def MakeUrl(short_name, url):
+        s = '<a href="%(url)s">%(name)s</a>'
+        return mark_safe(s % {'url':url,
+                              'name':short_name})
+
+    line_dicts = []
+    field_names = good_lines[0]['labels'].keys() + ['Start-Pos', 'End-Pos', 'Gene-Name', 'Mutation',
+                                                'Mutation-Descriptions',
+                                                'Effect-Type', 'HIVGene', 'Interaction-Type',
+                                                'HumanGene', 'Articles']
+    order_check = itemgetter(*order)
+    for line in good_lines:
+        for mut in line['Mutations']:
+            val_dict = defaultdict(lambda : None, line['labels'].items())
+            val_dict['Start-Pos'] = line['Position'][0]
+            val_dict['End-Pos'] = line['Position'][1]
+            val_dict['Gene-Name'] = line['Gene'].Name or 'Unlabeled'
+            val_dict['Mutation-Descriptions'] = '|'.join(mut.Descriptions.values_list('Slug',
+                                                                                    flat = True))
+            effect_type = mut.GetEffect()
+            if effect_type:
+                val_dict['Effect-Type'] = mut.GetEffect().EffectType.Slug
+            if mut.Interaction.exists():
+                val_dict['HIVGene'] = mut.Interaction.latest().HIVGene.Name
+                val_dict['Interaction-Type'] = mut.Interaction.latest().InteractionType.Type
+                val_dict['HumanGene'] = mut.Interaction.latest().HumanGene.Name
+
+            if for_csv:
+                val_dict['Articles'] = '|'.join(mut.GetArticles().values_list('PMID', flat = True))
+                val_dict['Mutation'] = mut.Mut
+
+            else:
+                val_dict['Mutation'] = MakeUrl(mut.Mut, mut.get_absolute_url())
+                arts = mut.GetArticles()
+                if arts.exists():
+                    art_data = [str(art.PMID) for art in arts]
+                    art_data2 = [art.get_absolute_url() for art in arts]
+                    val_dict['Articles'] = '|'.join(map(MakeUrl, art_data, art_data2))
+
+            print order_check(val_dict)
+
+
+
+
+            line_dicts.append(deepcopy(val_dict))
+
+    if order:
+        line_dicts.sort(key = order_check)
+
+    if for_csv:
+        return line_dicts, field_names
+    else:
+        return map(itemgetter(*field_names), line_dicts), field_names
+
+
 			
 	
 	
