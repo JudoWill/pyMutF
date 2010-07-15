@@ -67,8 +67,9 @@ class ChoiceTagField(forms.ModelChoiceField):
                 if len(slug.strip()) == 0:
                     continue
                 try:
-                    tag, isnew = MutationTags.objects.get_or_create(Slug__iexact = slug.strip(),
-                                                                    defaults = {'Slug':slug})
+                    slug = slug.strip()
+                    tag, isnew = MutationTags.objects.get_or_create(Slug = slug)
+                    print isnew
                 except MultipleObjectsReturned:
                     tag = MutationTags.objects.filter(Slug__iexact = slug.strip())[0]
 
