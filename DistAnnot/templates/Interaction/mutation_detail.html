@@ -21,7 +21,7 @@
 {% endif %}
 
 {% block TagForm %}
-{% for desc in object.Descriptions.all %}
+{% for desc in object.Descriptions.all.distinct %}
 <li>{{ desc.Slug }}</li>
 {% endfor %}
 <p>Click <a href="{% url mutation_tag object_id=object.id %}">here</a> to update the descriptions!</p>

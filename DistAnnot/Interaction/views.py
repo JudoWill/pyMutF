@@ -196,7 +196,7 @@ def MakeDictList(good_lines, order = None, for_csv = False, show_fields = None):
             val_dict['Start-Pos'] = line['Position'][0]
             val_dict['End-Pos'] = line['Position'][1]
             val_dict['Gene-Name'] = line['Gene'].Name or 'Unlabeled'
-            val_dict['Mutation-Descriptions'] = '|'.join(mut.Descriptions.values_list('Slug',
+            val_dict['Mutation-Descriptions'] = '|'.join(mut.Descriptions.distinct().values_list('Slug',
                                                                                     flat = True))
             effect_type = mut.GetEffect()
             if effect_type:
