@@ -45,8 +45,9 @@ class AutoCompleteMutationTagInput(forms.TextInput):
         """Must be passed a QuerySet!!!"""
         output = super(AutoCompleteTagInput, self).render(name, value, attrs)
 
+        tag_list = MutationTags.objects.all().values_list('Slug', flat = True)
 
-        json_data = simplejson.dumps()
+        json_data = simplejson.dumps(tag_list)
         return output +  MakeString(name, json_data)
 
 
