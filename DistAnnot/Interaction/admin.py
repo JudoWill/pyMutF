@@ -29,6 +29,20 @@ class ArticleAdmin(admin.ModelAdmin):
 class ExtraGeneNameAdmin(admin.ModelAdmin):
     pass
 
+class MutationTagsAdmin(admin.ModelAdmin):
+    list_display = ['Slug', 'Description']
+    actions = ['Join_Tags']
+    def Join_Tags(self, request, queryset):
+        first = queryset[0]
+        num_items = queryset.count()-1
+        for item in queryset[1:]:
+            Reference.objects.filter(Tag = item).update(Tag = first)
+            item.delete()
+        self.message_user(request, 'Merged %d tags into %s' % (num_items,
+                                                               first.Slug))
+
+
+
 admin.site.register(Sentence, SentenceAdmin)
 admin.site.register(Interaction, InteractionAdmin)
 admin.site.register(Mutation, MutationAdmin)
@@ -38,4 +52,5 @@ admin.site.register(InteractionType, InteractionTypeAdmin)
 admin.site.register(EffectType, EffectTypeAdmin)
 admin.site.register(Article, ArticleAdmin)
 admin.site.register(ExtraGeneName, ExtraGeneNameAdmin)
+admin.site.register(MutationTags, MutationTagsAdmin)
 
