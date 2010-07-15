@@ -15,6 +15,5 @@ class MutationSearch(forms.Form):
 
 class MutationTagForm(forms.Form):
 
-    Slug = forms.SlugField()
-    Description = forms.CharField(widget = forms.Textarea)
-
+    Tags = ChoiceTagField(queryset = MutationTags.objects.all())
+    Article = forms.IntegerField(widget = forms.HiddenInput)

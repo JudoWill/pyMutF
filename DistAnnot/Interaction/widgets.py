@@ -1,5 +1,5 @@
 from django import forms
-from DistAnnot.Interaction.models import Gene, MutationTags
+from DistAnnot.Interaction.models import *
 from DistAnnot.Annot.widgets import AutoCompleteTagInput, AutoCompleteTagInputLarge
 from django.conf import settings
 from django.utils import simplejson
@@ -29,7 +29,7 @@ def MakeString(name, json_obj):
 
     return outstr
 
-class AutoCompleteMutationTagInput(forms.TextInput):
+class AutoCompleteMutationTagInput(forms.Textarea):
     class Media:
         css = {
             'all': (settings.MEDIA_URL+'/'+'jquery.autocomplete.css',)
@@ -43,11 +43,11 @@ class AutoCompleteMutationTagInput(forms.TextInput):
 
     def render(self, name, value, attrs=None):
         """Must be passed a QuerySet!!!"""
-        output = super(AutoCompleteTagInput, self).render(name, value, attrs)
+        output = super(AutoCompleteMutationTagInput, self).render(name, value, attrs)
 
         tag_list = MutationTags.objects.all().values_list('Slug', flat = True)
 
-        json_data = simplejson.dumps(tag_list)
+        json_data = simplejson.dumps(list(tag_list))
         return output +  MakeString(name, json_data)
 
 
@@ -56,7 +56,7 @@ class ChoiceTagField(forms.ModelChoiceField):
         self.queryset = queryset
         kwargs['widget'] = AutoCompleteMutationTagInput(attrs = {'queryset':queryset})
         kwargs['queryset'] = queryset
-        super(ChoiceGeneField, self).__init__(*args, **kwargs)
+        super(ChoiceTagField, self).__init__(*args, **kwargs)
 
     def to_python(self, value):
             if not value:
@@ -64,17 +64,22 @@ class ChoiceTagField(forms.ModelChoiceField):
 
             id_list = []
             for slug in value.split(','):
+                if len(slug.strip()) == 0:
+                    continue
                 try:
-                    tag, isnew = MutatationTags.objects.get_or_create(Slug__iexact = slug.strip())
+                    tag, isnew = MutationTags.objects.get_or_create(Slug__iexact = slug.strip(),
+                                                                    defaults = {'Slug':slug})
                 except MultipleObjectsReturned:
-                    tag = MutatationTags.filter(Slug__iexact = slug.strip())[0]
+                    tag = MutationTags.objects.filter(Slug__iexact = slug.strip())[0]
 
-                id_list.append(tad.id)
+                id_list.append(tag.id)
 
-
-            return MutationTags.objects.filter(pk__in = id_list)
-        def validate(self, value):
-            pass
+            print id_list
+            tag_list = MutationTags.objects.filter(pk__in = id_list)
+            print 'len', len(tag_list)
+            return tag_list
+    def validate(self, value):
+        pass
 
 
 
