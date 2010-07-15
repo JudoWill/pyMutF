@@ -12,7 +12,7 @@ from DistAnnot.Interaction.models import *
 from DistAnnot.Annot.models import *
 from DistAnnot.Queries.models import *
 from DistAnnot.Interaction.forms import *
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 
 # Create your views here.
 from django.template.defaultfilters import slugify
@@ -70,7 +70,7 @@ def TagMutation(request, object_id = None):
                 obj.save()
 
                 mut.Descriptions.add(obj)
-        return reverse('mutation_detail', kwargs = {'object_id':mut.pk})
+        return HttpResponseRedirect(reverse('mutation_detail', kwargs = {'object_id':mut.pk}))
     else:
         initial = mut.Descriptions.values('Slug', 'Description')
         formset = TagFormset(initial = initial)
