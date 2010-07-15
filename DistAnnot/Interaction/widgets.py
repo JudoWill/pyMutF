@@ -64,9 +64,9 @@ class ChoiceTagField(forms.ModelChoiceField):
             id_list = []
             for slug in value.split(','):
                 try:
-                    tag, isnew = MutatationTags.objects.get_or_create(Slug__iexact = slug)
+                    tag, isnew = MutatationTags.objects.get_or_create(Slug__iexact = slug.strip())
                 except MultipleObjectsReturned:
-                    tag = MutatationTags.filter(Slug__iexact = slug)[0]
+                    tag = MutatationTags.filter(Slug__iexact = slug.strip())[0]
 
                 id_list.append(tad.id)
 
