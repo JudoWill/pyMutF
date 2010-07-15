@@ -1,10 +1,81 @@
 from django import forms
-from DistAnnot.Interaction.models import Gene
+from DistAnnot.Interaction.models import Gene, MutationTags
 from DistAnnot.Annot.widgets import AutoCompleteTagInput, AutoCompleteTagInputLarge
+from django.conf import settings
+from django.utils import simplejson
+from django.utils.safestring import mark_safe
 
 from operator import attrgetter
 from django.db.models.query_utils import Q
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
+
+
+
+def MakeString(name, json_obj):
+
+    outstr = mark_safe(u'''<script type="text/javascript">
+            jQuery("#id_%(name)s").autocomplete(%(json)s, {
+                width: 700,
+                max: 10,
+                highlight: false,
+                multiple: true,
+                multipleSeparator: ", ",
+                scroll: true,
+                scrollHeight: 300,
+                matchContains: true,
+                autoFill: true,
+            });
+            </script>''' % {'name':name, 'json':json_obj})
+
+    return outstr
+
+class AutoCompleteMutationTagInput(forms.TextInput):
+    class Media:
+        css = {
+            'all': (settings.MEDIA_URL+'/'+'jquery.autocomplete.css',)
+        }
+        js = (
+            settings.MEDIA_URL+'/'+'lib/jquery.js',
+            settings.MEDIA_URL+'/'+'lib/jquery.bgiframe.min.js',
+            settings.MEDIA_URL+'/'+'lib/jquery.ajaxQueue.js',
+            settings.MEDIA_URL+'/'+'jquery.autocomplete.js'
+        )
+
+    def render(self, name, value, attrs=None):
+        """Must be passed a QuerySet!!!"""
+        output = super(AutoCompleteTagInput, self).render(name, value, attrs)
+
+
+        json_data = simplejson.dumps()
+        return output +  MakeString(name, json_data)
+
+
+class ChoiceTagField(forms.ModelChoiceField):
+    def __init__(self, queryset, *args, **kwargs):
+        self.queryset = queryset
+        kwargs['widget'] = AutoCompleteMutationTagInput(attrs = {'queryset':queryset})
+        kwargs['queryset'] = queryset
+        super(ChoiceGeneField, self).__init__(*args, **kwargs)
+
+    def to_python(self, value):
+            if not value:
+                return None
+
+            id_list = []
+            for slug in value.split(','):
+                try:
+                    tag, isnew = MutatationTags.objects.get_or_create(Slug__iexact = slug)
+                except MultipleObjectsReturned:
+                    tag = MutatationTags.filter(Slug__iexact = slug)[0]
+
+                id_list.append(tad.id)
+
+
+            return MutationTags.objects.filter(pk__in = id_list)
+        def validate(self, value):
+            pass
+
+
 
 
 
