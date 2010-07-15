@@ -59,7 +59,7 @@ class Mutation(models.Model):
     Gene = models.ForeignKey('Gene', blank = True, null = True)
     Interaction = models.ManyToManyField(Interaction, through = 'InteractionEffect')
     Position = models.IntegerField(default = None, null = True)
-    Descriptions = models.ManyToManyField('MutationTags')
+    Descriptions = models.ManyToManyField('MutationTags', through = 'Reference')
 
     def __unicode__(self):
         
@@ -121,6 +121,13 @@ class Mutation(models.Model):
             arts += [sent.Article.id]
 
         return Article.objects.filter(id__in = arts)
+
+class Reference(models.Model):
+    Article = models.ForeignKey('Article')
+    Mutation = models.ForeignKey('Mutation')
+    Tag = models.ForeignKey('MutationTags')
+
+
 
 class MutationTags(models.Model):
     Slug = models.SlugField()
