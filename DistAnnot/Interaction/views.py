@@ -103,6 +103,11 @@ def TagMutation(request, object_id = None):
 
 def mutation_search(request):
 
+    valid_fields = ['Start-Pos', 'End-Pos', 'Gene-Name', 'Mutation',
+                    'Mutation-Descriptions', 'Effect-Type', 'HIVGene',
+                    'Interaction-Type', 'HumanGene', 'Articles']
+    show_fields = ['Start-Pos', 'End-Pos', 'Gene-Name', 'Mutation',
+                    'Mutation-Descriptions', 'Articles']
 
     if request.method == 'POST':
 
@@ -137,14 +142,15 @@ def mutation_search(request):
                                        'Position':(row['Start'], row['Stop']),
                                         'Mutations':valid_muts})
 
-            order = ('Gene-Name', 'Mutation')
-            dict_list, field_names = MakeDictList(good_lines, order = order)
+            order = map(lambda x: x.strip(), form.cleaned_data['order'].split(','))
+            dict_list, field_names = MakeDictList(good_lines, order = order, show_fields = show_fields)
 
             context = {
                 'form':form,
                 'good_lines':dict_list,
                 'extra_headers':extra_headers,
-                'field_names':field_names
+                'field_names':field_names,
+                'sortable_fields':field_names
             }
             if form.cleaned_data['csv_format']:
                 resp = HttpResponse()
@@ -159,17 +165,18 @@ def mutation_search(request):
                 return render_to_response('Interaction/mutation_search.html', context,
                                           context_instance = RequestContext(request))
     else:
-        form = MutationSearch()
+        form = MutationSearch(initial = {'order':'Gene-Name, Mutation'})
 
 
     context = {
-        'form':form
+        'form':form,
+        'sortable_fields':valid_fields
     }    
 
     return render_to_response('Interaction/mutation_search.html', context,
                                 context_instance = RequestContext(request))
 
-def MakeDictList(good_lines, order = None, for_csv = False):
+def MakeDictList(good_lines, order = None, for_csv = False, show_fields = None):
 
     def MakeUrl(short_name, url):
         s = '<a href="%(url)s">%(name)s</a>'
@@ -177,10 +184,11 @@ def MakeDictList(good_lines, order = None, for_csv = False):
                               'name':short_name})
 
     line_dicts = []
-    field_names = good_lines[0]['labels'].keys() + ['Start-Pos', 'End-Pos', 'Gene-Name', 'Mutation',
-                                                'Mutation-Descriptions',
-                                                'Effect-Type', 'HIVGene', 'Interaction-Type',
-                                                'HumanGene', 'Articles']
+    field_names = good_lines[0]['labels'].keys()
+    field_names += show_fields or ['Start-Pos', 'End-Pos', 'Gene-Name', 'Mutation',
+                                    'Mutation-Descriptions',
+                                    'Effect-Type', 'HIVGene', 'Interaction-Type',
+                                    'HumanGene', 'Articles']
     order_check = itemgetter(*order)
     for line in good_lines:
         for mut in line['Mutations']:
@@ -209,11 +217,6 @@ def MakeDictList(good_lines, order = None, for_csv = False):
                     art_data = [str(art.PMID) for art in arts]
                     art_data2 = [art.get_absolute_url() for art in arts]
                     val_dict['Articles'] = '|'.join(map(MakeUrl, art_data, art_data2))
-
-            print order_check(val_dict)
-
-
-
 
             line_dicts.append(deepcopy(val_dict))
 

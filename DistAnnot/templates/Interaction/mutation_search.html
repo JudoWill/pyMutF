@@ -4,6 +4,7 @@
 <p>This form can be used to search the mutation list. Cut & Paste a list of genes and mutations. Use the Entrez-ID, start and stop positions in csv format.</p>
 <form action="" method="post" >{% csrf_token %}
 {{ form.as_p }}
+<p>Results can be sorted by: {{ sortable_fields|join:", " }}</p>
 <input type="submit" value="Submit"/>
 </form>
 {% if good_lines %}
@@ -17,7 +18,7 @@
 {% for line in good_lines %}
 <tr>
 {% for item in line %}
-<td>{% if item %}{{ item|safe }}{% endif %}</td>
+<td>{{ item|safe }}</td>
 {% endfor %}
 </tr>
 {% endfor %}
