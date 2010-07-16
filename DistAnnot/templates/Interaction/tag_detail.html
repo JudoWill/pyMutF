@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+
+{% block subtitle %}Tag Detail: {{ object.Slug }}{% endblock %}
+
+<h3>Description</h3>
+<p>{{ object.Description|default:"No description yet!" }}</p>
+{% block content %}
+<table>
+<thead>
+<th>Mutation</th>
+<th>Gene</th>
+<th>Other Effects</th>
+</thead>
+{% for mut in object.mutation_set.all %}
+<tr>
+<td>{{ mut.Mut }}</td>
+<td>{{ mut.Gene.Name|default:"Not Annotated yet!" }}</td>
+<td>{% spaceless %}
+{% for desc in mut.Descriptions.all %}
+<a href="{% url tag_detail object_id=desc.pk %}">{{ desc.Slug }}</a>,
+{% endfor %}
+{% endspaceless %}
+</td>
+</tr>
+{% endfor %}
+</table>
+
+
+{% endblock %}

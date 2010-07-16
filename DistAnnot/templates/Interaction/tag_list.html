@@ -11,7 +11,7 @@
 </thead>
 {% for tag in object_list %}
 <tr>
-<td>{{ tag.Slug }}</td>
+<td><a href="{% url tag_detail object_id=tag.pk %}">{{ tag.Slug }}</a></td>
 <td>{{ tag.Description }}</td>
 <td>{{ tag.mutation_set.count }}</td>
 </tr>
