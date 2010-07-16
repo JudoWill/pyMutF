@@ -14,7 +14,7 @@
 </thead>
 {% for mut in object.mutation_set.all %}
 <tr>
-<td>{{ mut.Mut }}</td>
+<td><a href="{% url mutation_detail object_id=mut.pk %}">{{ mut.Mut }}</a></td>
 <td>{{ mut.Gene.Name|default:"Not Annotated yet!" }}</td>
 <td>{% spaceless %}
 {% for desc in mut.Descriptions.all %}
