@@ -127,11 +127,19 @@ class Reference(models.Model):
     Mutation = models.ForeignKey('Mutation')
     Tag = models.ForeignKey('MutationTags')
 
+    def __unicode__(self):
+
+        return ':'.join([str(self.Article), str(self.Mutation), str(self.Tag)])
+        
+
 
 
 class MutationTags(models.Model):
     Slug = models.SlugField()
     Description = models.TextField()
+
+    def __unicode__(self):
+        return self.Slug
 
 
 class InteractionEffect(models.Model):
