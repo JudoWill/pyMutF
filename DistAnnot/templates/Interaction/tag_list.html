@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block subtitle %}Tag List{% endblock %}
+
+{% block content %}
+<table width="70%">
+<thead>
+<th>Tag</th>
+<th>Description</th>
+<th>Count</th>
+</thead>
+{% for tag in object_list %}
+<tr>
+<td>{{ tag.Slug }}</td>
+<td>{{ tag.Description }}</td>
+<td>{{ tag.mutation_set.count }}</td>
+</tr>
+{% endfor %}
+</table>
+
+
+{% endblock %}
