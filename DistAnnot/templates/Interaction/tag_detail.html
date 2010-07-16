@@ -17,7 +17,7 @@
 <td><a href="{% url mutation_detail object_id=mut.pk %}">{{ mut.Mut }}</a></td>
 <td>{{ mut.Gene.Name|default:"Not Annotated yet!" }}</td>
 <td>{% spaceless %}
-{% for desc in mut.Descriptions.all %}
+{% for desc in mut.Descriptions.distinct %}
 <a href="{% url tag_detail object_id=desc.pk %}">{{ desc.Slug }}</a>,
 {% endfor %}
 {% endspaceless %}
