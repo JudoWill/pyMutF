@@ -8,6 +8,13 @@
 
 <p>Gene: {{ object.Gene.Name|default:"Unknown!!" }}</p>
 
+<h3>Effects</h3>
+{% for desc in object.Descriptions.all.distinct %}
+<li>{{ desc.Slug }}</li>
+{% empty %}
+<p>No descriptions yet!</p>
+{% endfor %}
+<p></p>
 <h3>Articles</h3>
 {% for sent in object.sentence_set.all %}
 <h4>{{ sent.Article.Title }}</h4>
@@ -21,9 +28,6 @@
 {% endif %}
 
 {% block TagForm %}
-{% for desc in object.Descriptions.all.distinct %}
-<li>{{ desc.Slug }}</li>
-{% endfor %}
 <p>Click <a href="{% url mutation_tag object_id=object.id %}">here</a> to update the descriptions!</p>
 {% endblock %}
 
