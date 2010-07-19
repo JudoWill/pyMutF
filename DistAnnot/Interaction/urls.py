@@ -25,6 +25,11 @@ tag_info = {
     'queryset':MutationTags.objects.all()
 }
 
+gene_info = {
+    'template_name':'Interaction/gene_detail.html',
+    'queryset':Gene.objects.all()
+}
+
 
 urlpatterns = patterns('',
      url(r'^stats.html', 'Interaction.views.stats', name = 'stats'),
@@ -36,5 +41,6 @@ urlpatterns = patterns('',
      url(r'^mutation/(?P<object_id>\d*)/tag.html', 'Interaction.views.TagMutation', name = 'mutation_tag'),
      url(r'^tag/tag_list.html', list_detail.object_list, tag_list_info, name = 'tag_list'),
      url(r'^tag/(?P<object_id>\d*)/detail.html', list_detail.object_detail, tag_info, name = 'tag_detail'),
+     url(r'^gene/(?P<object_id>\d*)/detail.html', list_detail.object_detail, gene_info, name = 'gene_detail'),
      
 )
