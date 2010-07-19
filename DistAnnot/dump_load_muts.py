@@ -23,23 +23,18 @@ def load_muts(file_name):
         for row in DictReader(handle):
             try:
                 mut = Mutation.objects.get(Mut = row['Mut'],
-                                           Gene__Entrez = int(row['Mut']))
+                                           Gene__Entrez = int(row['Gene-Entrez']))
             except ObjectDoesNotExist:
                 continue
 
-            tag = MutationTags.objects.get_or_create(Slug = row['Description'])
+            tag, isnew = MutationTags.objects.get_or_create(Slug = row['Description'].strip())
 
             try:
                 art = Article.objects.get(PMID = int(row['PMID']))
             except ObjectDoesNotExist:
                 continue
 
-            try:
-                gene = Gene.objects.get(Entrez = int(row['Gene-Entrez']))
-            except MultipleObjectsReturned:
-                gene = Gene.objects.filter(Entrez = int(row['Gene-Entrez']))[0]
-            except ObjectDoesNotExist:
-                continue
+            
 
             obj, isnew = Reference.objects.get_or_create(Article = art,
                                                          Mutation = mut,
