@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+
+{% block subtitle %}Gene Detail{% endblock %}
+
+{% block content %}
+<h4>{{ object.Name }}</h4>
+
+{% if object.ExtraNames.exists %}
+<h5>Also called:</h5>
+<ul>
+{% for ex in object.ExtraNames.all %}
+<li>{{ ex.Name }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+<p>Mentioned in {{ object.GetArticle.count }} articles.</p>
+
+<h4>Mutations</h4>
+<table>
+<thead>
+<th>Mutation</th>
+<th>Descriptions</th>
+</thead>
+{% for mut in object.mutation_set.all %}
+<tr>
+<td>{{ mut.Mut }}</td>
+<td>{{ mut.Descriptions.all|join:" | " }}</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}
