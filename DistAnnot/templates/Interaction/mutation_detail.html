@@ -17,7 +17,7 @@
 <p></p>
 <h3>Articles</h3>
 {% for sent in object.sentence_set.all %}
-<h4>{{ sent.Article.Title }}</h4>
+<h4>{{ sent.Article.GetTitle }}</h4>
 <p><a href="{{ sent.Article.get_absolute_url }}">{{ sent.Article.PMID }}</a></p>
 <p>{{ sent.Text }}</p>
 {% endfor %}
