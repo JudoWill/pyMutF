@@ -26,7 +26,7 @@
 {% for mut in object.mutation_set.all %}
 <tr>
 <td>{{ mut.Mut }}</td>
-<td>{{ mut.Descriptions.all|join:" | " }}</td>
+<td>{% for desc in mut.Descriptions.distinct.all %}<a href="{% url tag_detail desc.pk %}">{{ desc.Slug }}</a>{% if not forloop.last %} | {% endif %}{% endfor %}</td>
 </tr>
 {% endfor %}
 </table>
