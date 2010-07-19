@@ -168,6 +168,10 @@ class Gene(models.Model):
 
         return self.Name
 
+    def GetArticle(self):
+
+        return self.sentence_set.values('Article').distinct()
+
 class ExtraGeneName(models.Model):
     
     Name = models.CharField(max_length = 256)
