@@ -1,0 +1,50 @@
+[
+    {
+        "pk": 11, 
+        "model": "Interaction.mutationtags", 
+        "fields": {
+            "Slug": "conformational-epitope-resistance-mutation", 
+            "Description": ""
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "Interaction.mutationtags", 
+        "fields": {
+            "Slug": "conformational-mutation", 
+            "Description": ""
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "Interaction.mutationtags", 
+        "fields": {
+            "Slug": "sensitization-mutation", 
+            "Description": ""
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "Interaction.mutationtags", 
+        "fields": {
+            "Slug": "viral-rebound", 
+            "Description": ""
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "Interaction.mutationtags", 
+        "fields": {
+            "Slug": "lower-infection-rate", 
+            "Description": ""
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "Interaction.mutationtags", 
+        "fields": {
+            "Slug": "resistance-mutation", 
+            "Description": ""
+        }
+    }
+]

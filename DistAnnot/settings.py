@@ -105,6 +105,7 @@ INSTALLED_APPS = (
      'django.contrib.admin',
     'south',
     'django_nose',
+    'fixture_magic'
 )
 
 LOGIN_REDIRECT_URL = '/index.html'

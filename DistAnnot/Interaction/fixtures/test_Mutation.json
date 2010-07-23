@@ -1,0 +1,127 @@
+[
+    {
+        "pk": 814, 
+        "model": "Interaction.gene", 
+        "fields": {
+            "Entrez": 5747, 
+            "Organism": "Human", 
+            "Name": "focal adhesion kinase 1 isoform a", 
+            "ExtraNames": [
+                4158, 
+                4159, 
+                4160, 
+                4161, 
+                4162, 
+                4163
+            ]
+        }
+    }, 
+    {
+        "pk": 61, 
+        "model": "Interaction.gene", 
+        "fields": {
+            "Entrez": 382, 
+            "Organism": "Human", 
+            "Name": "ADP-ribosylation factor 6", 
+            "ExtraNames": [
+                277, 
+                278
+            ]
+        }
+    }, 
+    {
+        "pk": 14, 
+        "model": "Interaction.gene", 
+        "fields": {
+            "Entrez": 155807, 
+            "Organism": "HIV", 
+            "Name": "Vpr", 
+            "ExtraNames": []
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "Interaction.gene", 
+        "fields": {
+            "Entrez": 155030, 
+            "Organism": "HIV", 
+            "Name": "matrix", 
+            "ExtraNames": [
+                7171, 
+                7174, 
+                7176, 
+                7178, 
+                3708
+            ]
+        }
+    }, 
+    {
+        "pk": 638, 
+        "model": "Interaction.gene", 
+        "fields": {
+            "Entrez": 5058, 
+            "Organism": "Human", 
+            "Name": "serine/threonine-protein kinase PAK 1 isoform 2", 
+            "ExtraNames": [
+                3225, 
+                3226, 
+                3227, 
+                3228
+            ]
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "Interaction.mutation", 
+        "fields": {
+            "Mut": "L1034S", 
+            "Gene": 814, 
+            "Position": 1034
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "Interaction.mutation", 
+        "fields": {
+            "Mut": "Q67L", 
+            "Gene": 61, 
+            "Position": 67
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "Interaction.mutation", 
+        "fields": {
+            "Mut": "R77Q", 
+            "Gene": 14, 
+            "Position": 77
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "Interaction.mutation", 
+        "fields": {
+            "Mut": "R73A", 
+            "Gene": 14, 
+            "Position": 73
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "Interaction.mutation", 
+        "fields": {
+            "Mut": "F16A", 
+            "Gene": 6, 
+            "Position": 16
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "Interaction.mutation", 
+        "fields": {
+            "Mut": "K298A", 
+            "Gene": 638, 
+            "Position": 298
+        }
+    }
+]

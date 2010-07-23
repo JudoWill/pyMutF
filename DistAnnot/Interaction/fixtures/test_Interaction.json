@@ -1,0 +1,197 @@
+[
+    {
+        "pk": 5, 
+        "model": "Interaction.interactiontype", 
+        "fields": {
+            "Type": "co-localizes with"
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "Interaction.interactiontype", 
+        "fields": {
+            "Type": "interacts with"
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "Interaction.gene", 
+        "fields": {
+            "Entrez": 58, 
+            "Organism": "Human", 
+            "Name": "actin, alpha skeletal muscle", 
+            "ExtraNames": [
+                14, 
+                15, 
+                16, 
+                17, 
+                18, 
+                19, 
+                20, 
+                21, 
+                22, 
+                23
+            ]
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "Interaction.gene", 
+        "fields": {
+            "Entrez": 155030, 
+            "Organism": "HIV", 
+            "Name": "matrix", 
+            "ExtraNames": [
+                7171, 
+                7174, 
+                7176, 
+                7178, 
+                3708
+            ]
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "Interaction.interactiontype", 
+        "fields": {
+            "Type": "downregulates"
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "Interaction.gene", 
+        "fields": {
+            "Entrez": 19, 
+            "Organism": "Human", 
+            "Name": "ATP-binding cassette sub-family A member 1", 
+            "ExtraNames": [
+                5, 
+                6, 
+                7, 
+                8, 
+                9, 
+                10, 
+                11, 
+                12, 
+                13
+            ]
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "Interaction.gene", 
+        "fields": {
+            "Entrez": 156110, 
+            "Organism": "HIV", 
+            "Name": "Nef", 
+            "ExtraNames": []
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "Interaction.interactiontype", 
+        "fields": {
+            "Type": "inhibits"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "Interaction.gene", 
+        "fields": {
+            "Entrez": 155871, 
+            "Organism": "HIV", 
+            "Name": "Tat", 
+            "ExtraNames": []
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "Interaction.interactiontype", 
+        "fields": {
+            "Type": "cleaves"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "Interaction.gene", 
+        "fields": {
+            "Entrez": 2, 
+            "Organism": "Human", 
+            "Name": "alpha-2-macroglobulin precursor", 
+            "ExtraNames": [
+                1, 
+                2, 
+                3, 
+                4
+            ]
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "Interaction.gene", 
+        "fields": {
+            "Entrez": 155348, 
+            "Organism": "HIV", 
+            "Name": "retropepsin", 
+            "ExtraNames": [
+                7170, 
+                7173, 
+                7177
+            ]
+        }
+    }, 
+    {
+        "pk": 664, 
+        "model": "Interaction.interaction", 
+        "fields": {
+            "HIVGene": 1, 
+            "HumanGene": 7, 
+            "InteractionType": 5
+        }
+    }, 
+    {
+        "pk": 663, 
+        "model": "Interaction.interaction", 
+        "fields": {
+            "HIVGene": 1, 
+            "HumanGene": 7, 
+            "InteractionType": 1
+        }
+    }, 
+    {
+        "pk": 662, 
+        "model": "Interaction.interaction", 
+        "fields": {
+            "HIVGene": 6, 
+            "HumanGene": 7, 
+            "InteractionType": 4
+        }
+    }, 
+    {
+        "pk": 661, 
+        "model": "Interaction.interaction", 
+        "fields": {
+            "HIVGene": 4, 
+            "HumanGene": 5, 
+            "InteractionType": 3
+        }
+    }, 
+    {
+        "pk": 660, 
+        "model": "Interaction.interaction", 
+        "fields": {
+            "HIVGene": 3, 
+            "HumanGene": 2, 
+            "InteractionType": 2
+        }
+    }, 
+    {
+        "pk": 659, 
+        "model": "Interaction.interaction", 
+        "fields": {
+            "HIVGene": 1, 
+            "HumanGene": 2, 
+            "InteractionType": 1
+        }
+    }
+]
