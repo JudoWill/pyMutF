@@ -8,6 +8,7 @@ Replace these with more appropriate tests for your application.
 from django.test import TestCase
 from DistAnnot.Interaction.models import *
 from DistAnnot.PubmedUtils import *
+from django.contrib.auth.models import User, UserManager
 
 
 
@@ -92,3 +93,15 @@ class GenericViews(TestCase):
                 self.assertContains(resp, sent.Text)
             for art in mut.GetArticles():
                 self.assertContains(resp, str(art.PMID))
+
+    def test_stats(self):
+
+        check_sents = ('Number of Articles', 'Number of Sentences',
+                       'Number of Sentences with Mutations',
+                       'Number of Annotated Mutations',)
+        user = User.objects.create_user('tuser', 'test@test.com', 'test')
+        user.save()
+        self.client.login(username = 'tuser', password = 'test')
+        resp = self.client.get(reverse('stats'))
+        for sent in check_sents:
+            self.assertContains(resp, sent)
