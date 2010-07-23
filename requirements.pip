@@ -7,3 +7,5 @@ django-nose
 django-cpserver
 cherrypy
 pylint
+-e http://pyyaml.org/download/pyyaml/PyYAML-3.09.tar.gz
+-e http://nltk.googlecode.com/files/nltk-2.0b8.tar.gz
