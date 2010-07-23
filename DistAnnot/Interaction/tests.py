@@ -51,3 +51,16 @@ class GenericViews(TestCase):
             for sent in art.sentence_set.all():
                 self.assertContains(resp, sent.Text)
 
+    def test_tag_detail(self):
+
+        for tag in MutationTags.objects.all():
+            resp = self.client.get(tag.get_absolute_url())
+            for mut in tag.mutation_set.all():
+                self.assertContains(resp, mut.Mut)
+
+    def test_tag_list(self):
+
+        resp = self.client.get(reverse('tag_list'))
+        for mut in MutationTags.objects.all():
+            self.assertContains(resp, mut.Slug)
+
