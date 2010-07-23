@@ -72,3 +72,14 @@ class GenericViews(TestCase):
             for art in mut.GetArticles():
                 self.assertContains(resp, str(art.PMID))
 
+    def test_gene_detail(self):
+
+        for gene in Gene.objects.all():
+            resp = self.client.get(gene.get_absolute_url())
+            self.assertContains(resp, gene.Name)
+            for mut in gene.mutation_set.all():
+                self.assertContains(resp, mut.Mut)
+
+            tstr = 'Mentioned in %i articles.' % gene.GetArticle().count()
+            self.assertContains(resp, tstr)
+
