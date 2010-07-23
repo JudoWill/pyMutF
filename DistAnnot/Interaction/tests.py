@@ -36,3 +36,18 @@ class TestRetrieval(TestCase):
         for art, id in GetXMLfromList(test_articles, db = 'pmc'):
             print id
             self.assertTrue(id in test_articles)
+
+
+class GenericViews(TestCase):
+
+    fixtures = ['test_Article', 'test_Interaction', 'test_Mutation',
+                'test_Reference', 'test_MutationTags', 'test_Sentence']
+
+    def test_article_detail(self):
+
+        for art in Article.objects.all():
+            resp = self.client.get(art.get_absolute_url())
+            self.failUnlessEqual(resp.status_code, 200)
+            for sent in art.sentence_set.all():
+                self.assertContains(resp, sent.Text)
+
