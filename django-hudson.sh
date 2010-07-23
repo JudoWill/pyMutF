@@ -1,5 +1,5 @@
-virtualenv ve --no-site-packages
-source $WORKSPACE/ve/bin/activate
+mkvirtualenv ve --no-site-packages
+workon ve
 pip install -e git://github.com/davedash/django-fixture-magic#egg=django_fixture_magic
 pip install -e git://github.com/cmheisel/nose-xcover.git#egg=nosexcover
 pip install -q -E ./ve -r requirements.pip
