@@ -1,7 +1,7 @@
 django==1.2
 south>=0.7
 nose
-memcached
+memcache
 django-nose
 django-cpserver
 cherrypy
