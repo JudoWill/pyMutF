@@ -1,0 +1,7 @@
+django==1.2
+south>=0.7
+nose
+django-nose
+django-cpserver
+cherrypy
+git+git://github.com/davedash/django-fixture-magic#egg=django_fixture_magic
