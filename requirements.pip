@@ -2,6 +2,7 @@ django==1.2
 south>=0.7
 nose
 python-memcached
+BeautifulSoup
 django-nose
 django-cpserver
 cherrypy
