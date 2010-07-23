@@ -64,3 +64,11 @@ class GenericViews(TestCase):
         for mut in MutationTags.objects.all():
             self.assertContains(resp, mut.Slug)
 
+    def test_mutation_detail(self):
+
+        for mut in Mutation.objects.all():
+            resp = self.client.get(mut.get_absolute_url())
+            self.assertContains(resp, mut.Gene.Name)
+            for art in mut.GetArticles():
+                self.assertContains(resp, str(art.PMID))
+
