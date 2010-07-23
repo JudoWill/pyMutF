@@ -141,6 +141,9 @@ class MutationTags(models.Model):
     def __unicode__(self):
         return self.Slug
 
+    def get_absolute_url(self):
+        return reverse('tag_detail', kwargs = {'object_id':self.pk})
+
 
 class InteractionEffect(models.Model):
 
