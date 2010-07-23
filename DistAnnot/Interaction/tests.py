@@ -84,6 +84,16 @@ class GenericViews(TestCase):
             tstr = 'Mentioned in %i articles.' % gene.GetArticle().count()
             self.assertContains(resp, tstr)
 
+    def test_mutation_list(self):
+
+        resp = self.client.get(reverse('mutation_list'))
+        for mut in Mutation.objects.all():
+            self.assertContains(resp, mut.Mut)
+            self.assertContains(resp, mut.Gene.Name)
+            for desc in mut.Descriptions.all():
+                self.assertContains(resp, desc.Slug)
+
+
     def test_tag_mutation(self):
 
         for mut in Mutation.objects.all():
