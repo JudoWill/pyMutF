@@ -23,6 +23,7 @@ DATABASES = {
 }
 
 TEST_NAME = 'test_database'
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -102,7 +103,8 @@ INSTALLED_APPS = (
     'Queries',
     # Uncomment the next line to enable the admin:
      'django.contrib.admin',
-    'south'
+    'south',
+    'django_nose',
 )
 
 LOGIN_REDIRECT_URL = '/index.html'
