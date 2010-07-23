@@ -3,6 +3,8 @@ south>=0.7
 nose
 python-memcached
 BeautifulSoup
+PyYAML
+NLTK
 django-nose
 django-cpserver
 cherrypy
