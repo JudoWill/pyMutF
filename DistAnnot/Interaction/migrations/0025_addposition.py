@@ -11,7 +11,7 @@ class Migration(DataMigration):
     def forwards(self, orm):
         "Write your forwards methods here."
         reg = re.compile('(\d+)')
-        for mut in Mutation.objects.all():
+        for mut in orm.Mutation.objects.all():
             pos = reg.search(mut.Mut)
             mut.Position = int(pos.group(1))
             mut.save()

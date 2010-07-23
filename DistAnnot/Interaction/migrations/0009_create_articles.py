@@ -3,21 +3,20 @@ import datetime
 from south.db import db
 from south.v2 import DataMigration
 from django.db import models
-import DistAnnot.Interaction.models
 
 class Migration(DataMigration):
 
     def forwards(self, orm):
         "Write your forwards methods here."
-        pmids = DistAnnot.Interaction.models.Sentence.objects.values_list('PMID', flat=True).distinct()
+        pmids = orm.Sentence.objects.values_list('PMID', flat=True).distinct()
 
         for pmid in pmids:
-            DistAnnot.Interaction.models.Article.objects.get_or_create(PMID = pmid)
+            orm.Article.objects.get_or_create(PMID = pmid)
 
 
     def backwards(self, orm):
         "Write your backwards methods here."
-        DistAnnot.Interaction.models.Article.objects.all().delete()
+        orm.Article.objects.all().delete()
 
     models = {
         'Interaction.article': {

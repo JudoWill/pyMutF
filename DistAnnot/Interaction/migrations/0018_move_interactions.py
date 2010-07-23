@@ -13,7 +13,7 @@ class Migration(DataMigration):
         "Write your forwards methods here."
 
         #move all interaction from Sentence to Article
-        for article in Article.objects.all():
+        for article in orm.Article.objects.all():
             inter_set = set(article.Interactions.all())
             for sent in article.sentence_set.all():
                 for inter in sent.Interactions.all():
@@ -28,7 +28,7 @@ class Migration(DataMigration):
         "Write your backwards methods here."
 
         #move all interaction from Article to its sentences
-        for article in Article.objects.all():
+        for article in orm.Article.objects.all():
 
             inter_set = set(article.Interactions.all())
             for sent in article.sentence_set.all():

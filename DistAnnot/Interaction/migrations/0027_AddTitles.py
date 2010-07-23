@@ -3,14 +3,13 @@ import datetime
 from south.db import db
 from south.v2 import DataMigration
 from django.db import models
-import DistAnnot.Interaction.models
 import django.db.transaction
 
 class Migration(DataMigration):
 
     def forwards(self, orm):
         "Write your forwards methods here."
-        for art in DistAnnot.Interaction.models.Article.objects.all():
+        for art in orm.Article.objects.all():
 
             art.GetTitle()
 

@@ -9,8 +9,8 @@ class Migration(DataMigration):
 
     def forwards(self, orm):
         "Write your forwards methods here."
-        for sent in DistAnnot.Interaction.models.Sentence.objects.all():
-            art, isnew = DistAnnot.Interaction.models.Article.objects.get_or_create(PMID = sent.PMID)
+        for sent in orm.Sentence.objects.all():
+            art, isnew = orm.Article.objects.get_or_create(PMID = sent.PMID)
             sent.Article = art
             sent.save()
 
