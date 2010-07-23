@@ -97,7 +97,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     #'django_extensions',
-    'django_cpserver',
+    #'django_cpserver',
     'Annot',
     'Interaction',
     'Queries',
