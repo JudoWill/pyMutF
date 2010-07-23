@@ -1,5 +1,5 @@
 cd ./DistAnnot
-virtualenv -q ve
+virtualenv -q ve --no-site-packages
 source ./ve/bin/activate
 pip install -e git://github.com/davedash/django-fixture-magic#egg=django_fixture_magic
 pip install -e git://github.com/cmheisel/nose-xcover.git#egg=nosexcover
