@@ -1,4 +1,4 @@
-cd $WORKSPACE/DistAnnot
+cd $WORKSPACE/pyMutF/DistAnnot
 virtualenv -q ve
 source ./ve/bin/activate
 pip install -q -E ./ve -r requirements.pip
