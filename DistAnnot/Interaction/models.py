@@ -167,6 +167,10 @@ class Gene(models.Model):
 
         return '%s:%s' % (str(self.Entrez), self.Name)
 
+    def get_absolute_url(self):
+
+        return reverse('gene_detail', kwargs = {'object_id':self.pk})
+
     def to_query(self):
 
         return self.Name
