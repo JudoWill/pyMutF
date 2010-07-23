@@ -15,19 +15,7 @@ class SimpleTest(TestCase):
     
     fixtures = ['Interaction.simple_data.yaml']
 
-    def test_jibberish(self):
-        print Article.objects.all().count()
-        sent = Sentence.objects.all()[0]
-        mut = sent.Mutation.all()[0]
-
-        data = {'effect-SentenceID': sent.id,
-                'effect-MutID': mut.id,
-                'effect-BadExtraction':True}
-
-
-        resp = self.client.post(reverse('LabelMutation'), data)
-
-        self.assertFalse(Sentence.objects.filter(id = sent.id).exists())
+    
 
 
         
