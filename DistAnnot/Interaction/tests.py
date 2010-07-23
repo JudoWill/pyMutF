@@ -7,10 +7,12 @@ Replace these with more appropriate tests for your application.
 
 from django.test import TestCase
 from DistAnnot.Interaction.models import *
+from DistAnnot.PubmedUtils import *
 
 
 
-class SimpleTest(TestCase):
+class TestRetrieval(TestCase):
+
     def test_article_retrieval(self):
 
         test_articles = [ {'PMID':14694110, 'PMCID':'PMC368750', 'res':'K298A'},
@@ -20,3 +22,17 @@ class SimpleTest(TestCase):
             nart = Article(PMID = art['PMID'], PMCID = art['PMCID'])
             nart.ReadMuts()
             self.assertTrue(Mutation.objects.filter(Mut = art['res']).exists())
+
+    def test_list_retrieval_PMID(self):
+
+        test_articles = [14694110, 10074138]
+        for art, id in GetXMLfromList(test_articles):
+            print id
+            self.assertTrue(int(id) in test_articles)
+        
+    def test_list_retrieval_PMCID(self):
+
+        test_articles = ['PMC368750', 'PMC104048']
+        for art, id in GetXMLfromList(test_articles, db = 'pmc'):
+            print id
+            self.assertTrue(id in test_articles)
