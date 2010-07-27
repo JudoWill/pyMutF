@@ -7,5 +7,4 @@ django-nose
 django-cpserver
 cherrypy
 pylint
--e http://pyyaml.org/download/pyyaml/PyYAML-3.09.tar.gz
 PyYaml
