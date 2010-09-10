@@ -101,6 +101,7 @@ INSTALLED_APPS = (
     'Annot',
     'Interaction',
     'Queries',
+    'GenomicRegion',
     # Uncomment the next line to enable the admin:
      'django.contrib.admin',
     'south',
