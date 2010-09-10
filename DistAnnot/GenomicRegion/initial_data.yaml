@@ -1,0 +1,16 @@
+- fields: {Type: Official Symbol, is_required: true}
+  model: GenomicRegion.nametype
+  pk: 1
+- fields: {Type: Official Full Name, is_required: true}
+  model: GenomicRegion.nametype
+  pk: 2
+- fields: {Type: Refseq, is_required: false}
+  model: GenomicRegion.nametype
+  pk: 4
+- fields: {Type: Gene ID, is_required: true}
+  model: GenomicRegion.nametype
+  pk: 5
+- fields: {Type: Synonym, is_required: false}
+  model: GenomicRegion.nametype
+  pk: 6
+
