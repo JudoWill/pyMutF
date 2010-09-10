@@ -10,6 +10,12 @@ class NameMixin(models.Model):
 
     class Meta:
         abstract = True
+
+    def get_offical_symbol(self):
+        return self.Names.objects.get(NameType = 'Official Symbol')
+
+    def __unicode__(self):
+        return self.get_offical_symbol().Name
         
 class ProductMixin(models.Model):
     pass
@@ -30,8 +36,15 @@ class Name(models.Model):
     Name = models.CharField(max_length = 255)
     NameType = models.ForeignKey('NameType')
 
+    def __unicode__(self):
+        return self.Name
+
 class NameType(models.Model):
     Type = models.CharField(max_length = 255)
+    is_required = models.BooleanField(default = False)
+
+    def __unicode__(self):
+        return self.Type
 
 #Organism Related models
 
