@@ -1,5 +1,7 @@
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+
 
 # Create your models here.
 
@@ -7,13 +9,41 @@ from django.core.urlresolvers import reverse
 #Abstract Models
 
 class NameMixin(models.Model):
+    SymbolOrder = ('gene-id',
+                   'refseq',
+                   'offical-full-name',
+                   'official-symbol',
+                   'tax-id')
+    NameOrder = ('offical-full-name',
+                 'official-symbol',
+                 'synonym')
+
+
     Names = models.ManyToManyField('Name')
 
     class Meta:
         abstract = True
 
     def get_offical_symbol(self):
-        return self.Names.objects.get(NameType = 'Official Symbol')
+        return self.get_name(self.SymbolOrder)
+
+    def get_official_name(self):
+        return self.get_name(self.NameOrder)
+
+
+    def get_name(self, name_order):
+
+        for field in name_order:
+            try:
+                return self.Names.get(NameType__Slug__exact = field)
+            except ObjectDoesNotExist:
+                pass
+            except MultipleObjectsReturned:
+                return self.Names.filter(NameType__Slug__exact = field)[0]
+
+        return self.Names[0]
+
+
 
     def __unicode__(self):
         return self.get_offical_symbol().Name
@@ -51,12 +81,19 @@ class NameType(models.Model):
 #Organism Related models
 
 class Organism(NameMixin):
-    pass
+    SymbolOrder = ('refseq',
+                   'offical-full-name',
+                   'official-symbol',
+                   'tax-id')
 
     def get_absolute_url(self):
         return reverse('organism_object_detail', kwargs = {'object_id':self.pk})
 
 class Genome(NameMixin):
+    SymbolOrder = ('refseq',
+                   'offical-full-name',
+                   'official-symbol',
+                   'tax-id')
     Organism = models.ForeignKey(Organism)
 
     def get_absolute_url(self):
