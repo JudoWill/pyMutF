@@ -15,8 +15,11 @@ class GenomeViewsTest(TestCase):
     base_id = 'refseq'
     msg_prefix = 'genome'
 
+    def get_object_list_url(self):
+        return '/Genomes/genome/object_list/'
+
     def test_list_by_slug(self):
-        resp = self.client.get('/Genomes/genome/object_list/') 
+        resp = self.client.get(self.get_object_list_url())
         #annoying hack of hard-coding, cant seem to get around it though!
         for object in self.model.objects.all():
             off_sym = object.get_official_symbol().Name
