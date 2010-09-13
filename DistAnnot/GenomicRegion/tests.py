@@ -37,3 +37,12 @@ class GenomeViewsTest(TestCase):
                                     msg_prefix = self.msg_prefix)
 
 
+class GeneViewsTest(GenomeViewsTest):
+
+    view_class = GeneViews()
+    model = Gene
+    base_id = 'refseq'
+    msg_prefix = 'gene'
+
+    def get_object_list_url(self):
+        return '/Genomes/gene/object_list/'
