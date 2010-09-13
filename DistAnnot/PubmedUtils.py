@@ -1,7 +1,6 @@
 import sys
 import logging, logging.handlers
 from DistAnnot.ensure_ascii import unicode_to_ascii
-import PyMozilla
 import re, urllib2
 from datetime import datetime
 from BeautifulSoup import BeautifulStoneSoup
@@ -30,7 +29,7 @@ def GetXML(ID_LIST, db = 'pubmed'):
 
     req_url = RET_URL + '&WebENV=' + web_env
 
-    xml_data = urllib2.urlopen(req_url)
+    xml_data = urllib2.urlopen(req_url).read()
     return xml_data.decode('ascii', 'ignore')
 
 
@@ -90,8 +89,6 @@ def SearchPUBMED(search_sent, recent_date = None, BLOCK_SIZE = 100000, START = 0
     if START > 0:
         POST_URL += 'retstart=%i&' % START
 
-    moz_emu = PyMozilla.MozillaEmulator(cacher = None)
-
     search_term = search_sent.replace(' ', '%20')
     search_term = search_term.replace('-', '%20')
     search_term = search_term.replace('+', '%20')
@@ -100,7 +97,7 @@ def SearchPUBMED(search_sent, recent_date = None, BLOCK_SIZE = 100000, START = 0
         time_delta = datetime.today()-recent_date
         search_url += '&reldate=' + str(time_delta.days)
     
-    xml_data = moz_emu.download(search_url, trycount = 3)
+    xml_data = urllib2.urlopen(search_url).read()
 
     id_list = re.findall('<Id>(\d*)</Id>', xml_data)
     id_nums = map(lambda x: int(x), id_list)
