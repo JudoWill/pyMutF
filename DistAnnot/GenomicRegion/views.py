@@ -39,6 +39,7 @@ class BaseViews(object):
 
         info_dict = {
             'queryset':queryset,
+            'object_id':object_id,
             'template_name':'%s/detail.html' % self.template_root_path,
         }
 
