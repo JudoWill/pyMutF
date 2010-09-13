@@ -20,22 +20,21 @@ class BaseViews(object):
     pageinate_by = None
     default_slug = 'gene-id'
 
-    def list_by_slug(self, request, *args, **kwargs):
-        sortby = kwargs.pop('slug', default_slug)
-        queryset = self.model.objects.all().order_by(sortby)
+    def object_list(self, request):
+
+        queryset = self.model.objects.all()
 
         info_dict = {
             'queryset':queryset,
-            'template_name':'%s/list_by_slug.html' % self.template_root_path,
+            'template_name':'%s/object_list.html' % self.template_root_path,
         }
 
-        return list_detail.object_list(request, *args, **dict(info_dict, **kwargs))
+        return list_detail.object_list(request, **info_dict)
 
-    def object_detail(self, request, *args, **kwargs):
+    def object_detail(self, request, object_id = None):
 
-        object_id = kwargs.pop('object_id', None)
-        sortby = kwargs.pop('slug', default_slug)
-        queryset = self.model.objects.all().order_by(sortby)
+
+        queryset = self.model.objects.all()
 
         info_dict = {
             'queryset':queryset,
@@ -43,7 +42,7 @@ class BaseViews(object):
             'template_name':'%s/detail.html' % self.template_root_path,
         }
 
-        return list_detail.object_detail(request, *args, **dict(info_dict, **kwargs))
+        return list_detail.object_detail(request, **info_dict)
 
     def add_from_ncbi(self, request, *args, **kwargs):
         pass
