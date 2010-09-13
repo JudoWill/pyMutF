@@ -37,19 +37,19 @@ class NCBIPatterns(UrlPatternsBase):
 #REAL PATTERNS!!!
 class OrganismPatterns(NCBIPatterns):
     url_name_root = 'organism'
-    views = OrganismViews
+    views = OrganismViews()
 
 class GenomePatterns(NCBIPatterns):
     url_name_root = 'genome'
-    views = GenomeViews
+    views = GenomeViews()
 
 class GenePatterns(NCBIPatterns):
     url_name_root = 'gene'
-    views = GeneViews
+    views = GeneViews()
 
 class ProductPatterns(NCBIPatterns):
     url_name_root = 'product'
-    views = ProductViews
+    views = ProductViews()
 
 
 urlpatterns = OrganismPatterns().get_url_patterns()
