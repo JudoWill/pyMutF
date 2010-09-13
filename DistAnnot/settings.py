@@ -1,5 +1,7 @@
 # Django settings for DistAnnot project.
 import os.path, os
+import djcelery
+djcelery.setup_loader()
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -106,7 +108,8 @@ INSTALLED_APPS = (
      'django.contrib.admin',
     'south',
     'django_nose',
-    'fixture_magic'
+    'fixture_magic',
+    'djcelery'
 )
 
 LOGIN_REDIRECT_URL = '/index.html'

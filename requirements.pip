@@ -5,6 +5,8 @@ python-memcached
 BeautifulSoup
 django-nose
 django-cpserver
+django-celery
 cherrypy
 pylint
 PyYaml
+
