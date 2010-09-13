@@ -46,7 +46,7 @@ class NameMixin(models.Model):
 
 
     def __unicode__(self):
-        return self.get_offical_symbol().Name
+        return self.get_official_symbol().Name
         
 class ProductMixin(models.Model):
     pass
