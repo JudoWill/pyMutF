@@ -21,7 +21,8 @@ urlpatterns = patterns('',
 	url(r'logout.html', 'django.contrib.auth.views.logout', name = 'logout'),
     url(r'^index.html', 'Interaction.views.index', name = 'home'),
 	(r'^interactions/', include('Interaction.urls')),
-    (r'^annotations/', include('Annot.urls'))
+    (r'^annotations/', include('Annot.urls')),
+    (r'^Genomes/', include('GenomicRegion.urls'))
 )
 
 if settings.DEBUG:
