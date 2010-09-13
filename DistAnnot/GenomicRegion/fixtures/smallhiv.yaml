@@ -1,0 +1,86 @@
+- fields: {Name: HIV-1, NameType: 6}
+  model: GenomicRegion.name
+  pk: 1
+- fields: {Name: Human immunodeficiency virus 1, NameType: 2}
+  model: GenomicRegion.name
+  pk: 2
+- fields: {Name: NC_001802, NameType: 4}
+  model: GenomicRegion.name
+  pk: 3
+- fields: {Name: gag-pol, NameType: 6}
+  model: GenomicRegion.name
+  pk: 4
+- fields: {Name: '155348', NameType: 5}
+  model: GenomicRegion.name
+  pk: 5
+- fields: {Name: vif, NameType: 6}
+  model: GenomicRegion.name
+  pk: 6
+- fields: {Name: '155459', NameType: 5}
+  model: GenomicRegion.name
+  pk: 7
+- fields: {Name: NP_057849.4, NameType: 8}
+  model: GenomicRegion.name
+  pk: 8
+- fields: {Name: NP_057851.1, NameType: 8}
+  model: GenomicRegion.name
+  pk: 9
+- fields: {Slug: official-symbol, Type: Official Symbol}
+  model: GenomicRegion.nametype
+  pk: 1
+- fields: {Slug: official-full-name, Type: Official Full Name}
+  model: GenomicRegion.nametype
+  pk: 2
+- fields: {Slug: refseq, Type: Refseq}
+  model: GenomicRegion.nametype
+  pk: 4
+- fields: {Slug: gene-id, Type: Gene ID}
+  model: GenomicRegion.nametype
+  pk: 5
+- fields: {Slug: synonym, Type: Synonym}
+  model: GenomicRegion.nametype
+  pk: 6
+- fields: {Slug: tax-id, Type: TaxID}
+  model: GenomicRegion.nametype
+  pk: 7
+- fields: {Slug: genpept, Type: GenPept}
+  model: GenomicRegion.nametype
+  pk: 8
+- fields:
+    Names: [1, 2, 3]
+  model: GenomicRegion.organism
+  pk: 1
+- fields:
+    Names: [3]
+    Organism: 1
+  model: GenomicRegion.genome
+  pk: 1
+- fields:
+    Names: [4, 5]
+  model: GenomicRegion.gene
+  pk: 1
+- fields:
+    Names: [6, 7]
+  model: GenomicRegion.gene
+  pk: 2
+- fields:
+    Names: [4, 8]
+  model: GenomicRegion.product
+  pk: 1
+- fields:
+    Names: [6, 9]
+  model: GenomicRegion.product
+  pk: 2
+- fields: {Gene: 1, Genome: 1, Start: 336, Stop: 1637}
+  model: GenomicRegion.genelocation
+  pk: 1
+- fields: {Gene: 2, Genome: 1, Start: 4589, Stop: 5165}
+  model: GenomicRegion.genelocation
+  pk: 2
+- fields: {Gene: 1, Product: 1}
+  model: GenomicRegion.productlocation
+  pk: 1
+- fields: {Gene: 2, Product: 2}
+  model: GenomicRegion.productlocation
+  pk: 2
+
