@@ -24,7 +24,7 @@ class NameMixin(models.Model):
     class Meta:
         abstract = True
 
-    def get_offical_symbol(self):
+    def get_official_symbol(self):
         return self.get_name(self.SymbolOrder)
 
     def get_official_name(self):
