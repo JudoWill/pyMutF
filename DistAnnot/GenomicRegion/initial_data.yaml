@@ -1,19 +1,19 @@
-- fields: {Type: Official Symbol, is_required: true}
+- fields: {Slug: official-symbol, Type: Official Symbol}
   model: GenomicRegion.nametype
   pk: 1
-- fields: {Type: Official Full Name, is_required: true}
+- fields: {Slug: official-full-name, Type: Official Full Name}
   model: GenomicRegion.nametype
   pk: 2
-- fields: {Type: Refseq, is_required: false}
+- fields: {Slug: refseq, Type: Refseq}
   model: GenomicRegion.nametype
   pk: 4
-- fields: {Type: Gene ID, is_required: true}
+- fields: {Slug: gene-id, Type: Gene ID}
   model: GenomicRegion.nametype
   pk: 5
-- fields: {Type: Synonym, is_required: false}
+- fields: {Slug: synonym, Type: Synonym}
   model: GenomicRegion.nametype
   pk: 6
-- fields: {Type: TaxID, is_required: true}
+- fields: {Slug: tax-id, Type: TaxID}
   model: GenomicRegion.nametype
   pk: 7
 
