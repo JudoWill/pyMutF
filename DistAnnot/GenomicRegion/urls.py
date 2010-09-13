@@ -15,19 +15,19 @@ class NCBIPatterns(UrlPatternsBase):
 
     def get_add_from_ncbi(self):
         return patterns('',
-                        url('^add_from_pubmed.html',
+                        url('^%s/add_from_pubmed.html' % self.url_name_root,
                             self.views.add_from_ncbi,
                             name = '%s_add_from_pubmed' % self.url_name_root))
 
     def get_list_patterns(self):
         return patterns('',
-                        url('list_by_(?P<slug>[-\w]+)',
-                            self.views.list_by_slug,
-                            name = '%s_list_by_slug' % self.url_name_root))
+                        url('^%s/object_list/' % self.url_name_root,
+                            self.views.object_list,
+                            name = '%s_object_list' % self.url_name_root))
 
     def get_detail_patterns(self):
         return patterns('',
-                        url('detail-(?P<object_id>\d+).html',
+                        url('^%s/detail-(?P<object_id>\d+).html' % self.url_name_root,
                             self.views.object_detail,
                             name = '%s_object_detail' % self.url_name_root))
 
