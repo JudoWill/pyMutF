@@ -9,4 +9,4 @@ tar xf nltk-2.0b8.tar.gz
 pip install -e nltk-2.0b8/
 
 cd ./DistAnnot
-python manage.py test --with-coverage --cover-package=DistAnnot --with-xunit --with-xcoverage Interaction
+python manage.py test --with-coverage --cover-package=DistAnnot --with-xunit --with-xcoverage
