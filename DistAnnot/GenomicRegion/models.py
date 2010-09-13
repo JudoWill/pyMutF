@@ -41,7 +41,7 @@ class NameMixin(models.Model):
             except MultipleObjectsReturned:
                 return self.Names.filter(NameType__Slug__exact = field)[0]
 
-        return self.Names[0]
+        return self.Names.all()[0]
 
 
 
@@ -81,8 +81,8 @@ class NameType(models.Model):
 #Organism Related models
 
 class Organism(NameMixin):
-    SymbolOrder = ('refseq',
-                   'offical-full-name',
+    SymbolOrder = ('offical-full-name',
+                   'refseq',
                    'official-symbol',
                    'tax-id')
 
