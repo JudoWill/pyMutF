@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block subtitle %}Genomes List{% endblock %}
+
+{% block content %}
+<table width="70%">
+<thead>
+<th>Official Symbol</th>
+<th>Official Name</th>
+</thead>
+{% for genome in object_list %}
+<tr>
+<td><a href="{{ genome.get_absolute_url }}">{{ genome.get_official_symbol.Name }}</a></td>
+<td>{{ genome.get_official_name.Name }}</td>
+</tr>
+{% endfor %}
+</table>
+
+
+{% endblock %}

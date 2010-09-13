@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block subtitle %}Genome Details{% endblock %}
+
+{% block content %}
+<h4>{{ object.get_official_name }}}</h4>
+
+Also known as:
+<ul>
+{% for name in object.Names.all %}
+<li>{{ name.name }}</li>
+{% endfor %}
+</ul>
+
+{% endblock %}
