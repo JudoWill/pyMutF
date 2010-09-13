@@ -11,7 +11,7 @@ from django.utils import simplejson
 
 from models import *
 
-
+#Abstract views!
 class BaseViews(object):
 
     model = Genome
@@ -47,3 +47,25 @@ class BaseViews(object):
     def add_from_ncbi(self, request, *args, **kwargs):
         pass
 
+
+
+#Real views!!!
+class OrganismViews(BaseViews):
+    template_root_path = 'organism'
+    model = Organism
+    required_ids = ('tax-id',)
+
+class GenomeViews(BaseViews):
+    template_root_path = 'genome'
+    model = Genome
+    required_ids = ('tax-id',)
+
+class GeneViews(BaseViews):
+    template_root_path = 'gene'
+    model = Gene
+    required_ids = ('tax-id','gene-id')
+
+class ProductViews(BaseViews):
+    template_root_path = 'product'
+    model = Product
+    required_ids = ('tax-id','gene-id')
