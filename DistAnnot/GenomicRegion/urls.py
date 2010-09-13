@@ -10,12 +10,12 @@ class UrlPatternsBase(object):
 class GenePatterns(UrlPatternsBase):
 
     def get_url_patterns(self):
-        return self.get_add_from_pubmed() + self.get_list_patterns()
+        return self.get_add_from_ncbi() + self.get_list_patterns()
 
-    def get_add_from_pubmed(self):
+    def get_add_from_ncbi(self):
         return patterns('',
                         url('^add_from_pubmed.html',
-                            self.views.add_from_pubmed,
+                            self.views.add_from_ncbi,
                             name = '%s_add_from_pubmed' % self.url_name_root))
 
     def get_list_patterns(self):
