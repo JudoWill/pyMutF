@@ -56,3 +56,13 @@ class OrganismViewsTest(GenomeViewsTest):
 
     def get_object_list_url(self):
         return '/Genomes/organism/object_list/'
+
+class ProductViewsTest(GenomeViewsTest):
+
+    view_class = ProductViews()
+    model = Product
+    base_id = 'genpept'
+    msg_prefix = 'product'
+
+    def get_object_list_url(self):
+        return '/Genomes/product/object_list/'

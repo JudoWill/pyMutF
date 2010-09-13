@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block subtitle %}Product List{% endblock %}
+
+{% block content %}
+<table width="70%">
+<thead>
+<th>Official Symbol</th>
+<th>Official Name</th>
+</thead>
+{% for product in object_list %}
+<tr>
+<td><a href="{{ product.get_absolute_url }}">{{ product.get_official_symbol.Name }}</a></td>
+<td>{{ product.get_official_name.Name }}</td>
+</tr>
+{% endfor %}
+</table>
+
+
+{% endblock %}
