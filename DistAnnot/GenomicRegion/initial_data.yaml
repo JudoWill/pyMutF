@@ -13,4 +13,7 @@
 - fields: {Type: Synonym, is_required: false}
   model: GenomicRegion.nametype
   pk: 6
+- fields: {Type: TaxID, is_required: true}
+  model: GenomicRegion.nametype
+  pk: 7
 
