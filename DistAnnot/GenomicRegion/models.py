@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.urlresolvers import reverse
 
 # Create your models here.
 
@@ -41,7 +42,8 @@ class Name(models.Model):
 
 class NameType(models.Model):
     Type = models.CharField(max_length = 255)
-    is_required = models.BooleanField(default = False)
+    Slug = models.SlugField(max_length = 255)
+
 
     def __unicode__(self):
         return self.Type
@@ -51,16 +53,27 @@ class NameType(models.Model):
 class Organism(NameMixin):
     pass
 
+    def get_absolute_url(self):
+        return reverse('organism_object_detail', kwargs = {'object_id':self.pk})
+
 class Genome(NameMixin):
     Organism = models.ForeignKey(Organism)
 
+    def get_absolute_url(self):
+        return reverse('genome_object_detail', kwargs = {'object_id':self.pk})
 #Gene/Product related Models
 
 class Gene(NameMixin, ProductMixin):
     Genome = models.ManyToManyField(Genome, through = 'GeneLocation')
 
+    def get_absolute_url(self):
+        return reverse('gene_object_detail', kwargs = {'object_id':self.pk})
+
 class Product(NameMixin):
     Gene = models.ManyToManyField(Gene, through = 'ProductLocation')
+
+    def get_absolute_url(self):
+        return reverse('product_object_detail', kwargs = {'object_id':self.pk})
 
 #Location related models
 

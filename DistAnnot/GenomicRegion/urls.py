@@ -10,7 +10,7 @@ class UrlPatternsBase(object):
 class GenePatterns(UrlPatternsBase):
 
     def get_url_patterns(self):
-        return self.get_add_from_ncbi() + self.get_list_patterns()
+        return self.get_add_from_ncbi() + self.get_list_patterns() + self.get_detail_patterns()
 
     def get_add_from_ncbi(self):
         return patterns('',
@@ -22,5 +22,11 @@ class GenePatterns(UrlPatternsBase):
         return patterns('',
                         url('list_by_(?P<slug>[-\w]+)',
                             self.views.list_by_slug,
-                            name = '%s_list_by_slug' % self.url_name_root))        
+                            name = '%s_list_by_slug' % self.url_name_root))
+
+    def get_detail_patterns(self):
+        return patterns('',
+                        url('detail-(?P<object_id>\d+).html',
+                            self.views.object_detail,
+                            name = '%s_object_detail' % self.url_name_root))
     
