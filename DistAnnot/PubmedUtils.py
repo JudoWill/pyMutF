@@ -2,7 +2,7 @@ import sys
 import logging, logging.handlers
 from DistAnnot.ensure_ascii import unicode_to_ascii
 import PyMozilla
-import re
+import re, urllib2
 from datetime import datetime
 from BeautifulSoup import BeautifulStoneSoup
 from itertools import islice
@@ -24,14 +24,13 @@ def GetXML(ID_LIST, db = 'pubmed'):
     pmid_list = ','.join(map(lambda x: str(x), ID_LIST))
     post_req_url = POST_URL + '&id=' + pmid_list
 
-    moz_emu = PyMozilla.MozillaEmulator(cacher = None)
-    post_res = moz_emu.download(post_req_url, trycount = 3)
+    post_res = urllib2.urlopen(post_req_url).read()
 
     web_env = re.findall('<WebEnv>(.*?)</WebEnv>', post_res)[0]
 
     req_url = RET_URL + '&WebENV=' + web_env
 
-    xml_data = moz_emu.download(req_url, trycount = 3)
+    xml_data = urllib2.urlopen(req_url)
     return xml_data.decode('ascii', 'ignore')
 
 
