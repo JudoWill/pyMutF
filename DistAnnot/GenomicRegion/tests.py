@@ -46,3 +46,13 @@ class GeneViewsTest(GenomeViewsTest):
 
     def get_object_list_url(self):
         return '/Genomes/gene/object_list/'
+
+class OrganismViewsTest(GenomeViewsTest):
+
+    view_class = OrganismViews()
+    model = Organism
+    base_id = 'tax-id'
+    msg_prefix = 'organism'
+
+    def get_object_list_url(self):
+        return '/Genomes/organism/object_list/'
