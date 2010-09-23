@@ -4,6 +4,7 @@ from DistAnnot.Annot.models import MutationAnnot
 from DistAnnot.Interaction.models import *
 from DistAnnot.Interaction.widgets import *
 
+from autocomplete.fields import ModelChoiceField
 
 
 
@@ -18,3 +19,14 @@ class MutationTagForm(forms.Form):
 
     Tags = ChoiceTagField(queryset = MutationTags.objects.all())
     Article = forms.IntegerField(widget = forms.HiddenInput)
+
+class GeneAnnotForm(forms.Form):
+
+    Gene = ModelChoiceField('gene', required = False)
+    is_mutated = forms.BooleanField(required = False)
+
+
+class RefForm(forms.Form):
+    NewTag = models.CharField(required = False)
+    Tag = ModelChoiceField('tag', required = False)
+    
