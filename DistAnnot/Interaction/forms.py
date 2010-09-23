@@ -3,7 +3,8 @@ from django import forms
 from DistAnnot.Annot.models import MutationAnnot
 from DistAnnot.Interaction.models import *
 from DistAnnot.Interaction.widgets import *
-
+from django.template.defaultfilters import slugify
+from models import *
 from autocomplete.fields import ModelChoiceField
 
 
@@ -26,7 +27,22 @@ class GeneAnnotForm(forms.Form):
     is_mutated = forms.BooleanField(required = False)
 
 
-class RefForm(forms.Form):
+class RefForm(ModelForm):
     NewTag = models.CharField(required = False)
     Tag = ModelChoiceField('tag', required = False)
+
+    class Meta:
+        model = Reference
+        exclude = ('Article',)
+
+    def clean(self):
+        data = self.cleaned_data
+
+        if data['Tag'] is None and data['NewTag'] is not None:
+            new_tag = MutationTag(Slug = slugify(data['NewTag']))
+            new_tag.save()
+            data['Tag'] = new_tag
+            data['NewTag'] = None
+
+        return data
     
