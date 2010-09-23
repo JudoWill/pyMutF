@@ -185,3 +185,13 @@ def gene_list(request, q = None):
     l = MakeList(gene_query, extra_names)
     print l
     return HttpResponse(simplejson.dumps(l)[1:-1], mimetype='application/javascript')
+
+
+def label_random(request):
+
+    sent = GetRandomSent()
+    mut = sent.Mutation.all()[0]
+
+    return HttpResponseRedirect(reverse('mutation_tag', kwargs = {'object_id':mut.id}))
+
+    
