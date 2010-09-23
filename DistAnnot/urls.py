@@ -1,11 +1,20 @@
 from django.conf.urls.defaults import *
 from django.conf import settings
 
+from Interaction.models import *
+
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
+from autocomplete.views import autocomplete
 
+autocomplete.register(
+    id = 'gene',
+    queryset = Gene.objects.all(),
+    fields = ('Name', 'Entrez', 'ExtraNames__Name'),
+    limit = 5
+)
 
 urlpatterns = patterns('',
     # Example:

@@ -5,6 +5,8 @@ from DistAnnot.Interaction.models import Gene, InteractionType, EffectType
 from DistAnnot.Interaction.widgets import *
 from DistAnnot.Annot.widgets import *
 
+from autocomplete.fields import ModelChoiceField
+
 class AnnotForm(forms.Form):
 
     Bad_extraction = forms.BooleanField(required = False, label = 'Bad Extraction?',
@@ -24,3 +26,10 @@ class InteractionEffectForm(forms.Form):
                                             empty_label="No Effect", label = 'Effect on the Interaction')
     EffectFreeText = forms.CharField(widget = forms.Textarea, max_length = 256, required = False,
                                      label = 'Free Text of effect on the Interaction')
+
+
+class GeneAnnotForm(forms.Form):
+
+    Gene = ModelChoiceField('gene', required = False)
+    is_mutated = forms.BooleanField(required = False)
+
