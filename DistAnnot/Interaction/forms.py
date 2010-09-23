@@ -28,12 +28,14 @@ class GeneAnnotForm(forms.Form):
 
 
 class RefForm(ModelForm):
-    NewTag = models.CharField(required = False)
+    NewTag = forms.CharField(required = False)
     Tag = ModelChoiceField('tag', required = False)
+    Article = forms.ModelChoiceField(queryset = Article.objects.all(),
+                                     widget = forms.HiddenInput)
 
     class Meta:
         model = Reference
-        exclude = ('Article',)
+
 
     def clean(self):
         data = self.cleaned_data
