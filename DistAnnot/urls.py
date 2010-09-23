@@ -15,6 +15,12 @@ autocomplete.register(
     fields = ('Name', 'Entrez', 'ExtraNames__Name'),
     limit = 5
 )
+autocomplete.register(
+    id = 'tag',
+    queryset = MutationTags.objects.all(),
+    fields = ('Slug',),
+    limit = 5
+)
 
 urlpatterns = patterns('',
     # Example:
@@ -31,11 +37,14 @@ urlpatterns = patterns('',
     url(r'^index.html', 'Interaction.views.index', name = 'home'),
 	(r'^interactions/', include('Interaction.urls')),
     (r'^annotations/', include('Annot.urls')),
-    (r'^Genomes/', include('GenomicRegion.urls'))
+    (r'^Genomes/', include('GenomicRegion.urls')),
+    url('^autocomplete/(\w+)/$', autocomplete, name='autocomplete')
 )
 
 if settings.DEBUG:
     urlpatterns += patterns('',
         (r'^site_media/(?P<path>.*)$', 'django.views.static.serve',
          {'document_root': settings.STATIC_FILE_ROOT}),
+        (r'^js/(?P<path>.*)$', 'django.views.static.serve',
+         {'document_root': settings.STATIC_FILE_ROOT+'/js/'})
     )
