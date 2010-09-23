@@ -9,4 +9,4 @@ django-celery
 cherrypy
 pylint
 PyYaml
-
+django-autocomplete
