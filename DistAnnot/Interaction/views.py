@@ -58,10 +58,10 @@ def mutation_list(request):
 def TagMutation(request, object_id = None):
     print object_id
     mut = get_object_or_404(Mutation, pk = int(object_id))
-    TagFormset = formset_factory(MutationTagForm, can_delete = False, extra = 0)
-
+    #TagFormset = formset_factory(MutationTagForm, can_delete = False, extra = 0)
+    TagFormset = modelformset_factory(Reference, )
     if request.method == 'POST':
-        formset = TagFormset(request.POST)
+        formset = TagFormset(request.POST, instance = mut)
         if formset.is_valid():
             print 'is valid'
             for form in formset.forms:
@@ -81,16 +81,15 @@ def TagMutation(request, object_id = None):
             articles = mut.GetArticles()
 
     else:
-        initial = []
-        articles = mut.GetArticles()
-        for art in articles:
-            initial.append({'Article':art.pk})
-        formset = TagFormset(initial = initial)
+        #initial = []
+        #articles = mut.GetArticles()
+        #for art in articles:
+        #    initial.append({'Article':art.pk})
+        formset = TagFormset(instance = mut)
     
     context_dict = {
         'formset':formset,
         'object':mut,
-        'art_forms':zip(articles, formset.forms),
     }
 
     return render_to_response('Interaction/tag_mutation.html', context_dict,
