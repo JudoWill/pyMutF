@@ -28,23 +28,23 @@ urlpatterns = patterns('',
 
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:
-    (r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    (r'^pymutf/admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    (r'^admin/', include(admin.site.urls)),
-	url(r'login.html', 'django.contrib.auth.views.login', name = 'login'),
-	url(r'logout.html', 'django.contrib.auth.views.logout', name = 'logout'),
-    url(r'^index.html', 'Interaction.views.index', name = 'home'),
-	(r'^interactions/', include('Interaction.urls')),
-    (r'^annotations/', include('Annot.urls')),
-    (r'^Genomes/', include('GenomicRegion.urls')),
-    url('^autocomplete/(\w+)/$', autocomplete, name='autocomplete')
+    (r'^pymutf/admin/', include(admin.site.urls)),
+	url(r'^pymutf/login.html', 'django.contrib.auth.views.login', name = 'login'),
+	url(r'^pymutf/logout.html', 'django.contrib.auth.views.logout', name = 'logout'),
+    url(r'^pymutf/index.html', 'Interaction.views.index', name = 'home'),
+	(r'^pymutf/interactions/', include('Interaction.urls')),
+    (r'^pymutf/annotations/', include('Annot.urls')),
+    (r'^pymutf/Genomes/', include('GenomicRegion.urls')),
+    url('^pymutf/autocomplete/(\w+)/$', autocomplete, name='autocomplete')
 )
 
 if settings.DEBUG:
     urlpatterns += patterns('',
-        (r'^site_media/(?P<path>.*)$', 'django.views.static.serve',
+        (r'^pymutf/site_media/(?P<path>.*)$', 'django.views.static.serve',
          {'document_root': settings.STATIC_FILE_ROOT}),
-        (r'^js/(?P<path>.*)$', 'django.views.static.serve',
+        (r'^pymutf/js/(?P<path>.*)$', 'django.views.static.serve',
          {'document_root': settings.STATIC_FILE_ROOT+'/js/'})
     )
