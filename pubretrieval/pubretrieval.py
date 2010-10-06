@@ -123,7 +123,7 @@ if __name__ == '__main__':
             linkout = find_linkout(sel)
             if linkout:
                 try:
-                    path = path_dict['linkout']
+                    path = path_dict[linkout]
                 except KeyError:
                     logging.warning('No path for linkout!: %s at pmid:%s' % (linkout, pmid))
                     continue
