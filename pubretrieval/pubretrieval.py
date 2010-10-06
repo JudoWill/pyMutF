@@ -128,9 +128,13 @@ if __name__ == '__main__':
                     logging.warning('No path for linkout!: %s at pmid:%s' % (linkout, pmid))
                     continue
                 if path is not None:
+                    sel.click(linkout)
+                    sel.wait_for_page_to_load("30000")
                     further_dl = True
-                    for link in (linkout, )+path:
+                    for link in path:
+
                         if type(link) == StringType:
+                            print 'clicking: ', link
                             sel.click(link)
                             sel.wait_for_page_to_load("30000")
                         elif type(link) == FunctionType:
