@@ -6,26 +6,26 @@ from types import FunctionType, StringType
 from random import shuffle
 #from optparse import OptionParser
 
+from BeautifulSoup import BeautifulSoup
 
 
+def do_search(uid):
 
-def do_search(sel, uid):
-
-    sel.open('/pubmed')
-    sel.type('search_term', '%s[uid]' % uid)
-    sel.click('search')
-    sel.wait_for_page_to_load("30000")
-    sel.select_frame("relative=up")
-    return sel.is_text_present(uid)
+    return get_soup(r'http://www.ncbi.nlm.nih.gov/pubmed/'+uid)
 
 
-def find_linkout(sel):
+def get_soup(url):
+    data = urllib2.urlopen(url)
+    return BeautifulSoup(data.read())
 
-    linkouts = re.findall('linkout-icon-unknown-[\w-]*', sel.get_html_source())
+
+def find_linkout(soup, reg):
+
+    linkouts = soup.findAll(id = reg)
 
     if len(linkouts) == 1:
         logging.warning('Found single linkout')
-        return linkouts[0]
+        return linkouts[0]['id'], linkouts[0].parent['href']
     elif len(linkouts) > 1:
         logging.warning('Found multiple linkouts')
         return False
@@ -144,22 +144,21 @@ if __name__ == '__main__':
     }
 
 
-    sel = selenium("localhost", 4444, "*chrome", "http://www.ncbi.nlm.nih.gov/")
-    sel.start()
-    sel.open('about:blank')
-    raw_input()
 
 
     no_links = open('no_links.txt', 'a')
     missing_path = open('missing_path.txt', 'a')
     skipping = open('skipping.txt', 'a')
 
+    linkout_reg = re.compile('linkout-icon-unknown-[\w-]*')
 
     for pmid in pmids:
-        found = do_search(sel, pmid)
+        found = do_search(pmid)
         if found:
-            linkout = find_linkout(sel)
-            if linkout:
+            linkout_res = find_linkout(found, linkout_reg)
+            if linkout_res:
+                linkout, url = linkout_res
+                top_url = ''
                 try:
                     path = path_dict[linkout]
                 except KeyError:
@@ -167,28 +166,12 @@ if __name__ == '__main__':
                     missing_path.write('%s,%s\n' % (pmid, linkout))
                     continue
                 if path:
-                    sel.click(linkout)
-                    sel.select_pop_up('null')
-                    print sel.get_all_window_titles()
-                    try:
-                        sel.wait_for_page_to_load("30000")
-                    except:
-                        pass
-                    print sel.get_all_window_titles()
-                    further_dl = True
-                    for link in path:
+                    soup = get_soup(url)
+                    pdf_url = None
+                    for func in path:
+                        pdf_url, soup = func(soup, top_url)
 
-                        if type(link) == StringType:
-                            print 'clicking: ', link
-                            sel.click(link)
-                            sel.wait_for_page_to_load("30000")
-
-                        elif type(link) == FunctionType:
-                            further_dl = link(sel)
-                    if further_dl:
-                        pdf_url = get_pdf_link(sel)
-                        if pdf_url:
-                            get_pdf(pdf_url, pmid, path = results_dir)
+                    get_pdf(pdf_url, pmid, path = results_dir)
                 elif path is False:
                     skipping.write(pmid+'\n')
                 elif path is None:
