@@ -46,43 +46,23 @@ def get_pdf(url, uid, path = '/results'):
         handle.write(data.read())
     logging.warning('Sucess for %s' % uid)
 
+def process_soup(kwargs, soup, top_url, final = False):
 
-def get_pdf_link(sel):
-    url_reg = r'http\://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(/\S*)?.pdf'
-
-    res = re.findall(url_reg, sel.get_html_source())
-    if len(res) == 0:
-
-        url_reg = r'(/\S*)?.pdf'
-        res = re.findall(url_reg, sel.get_html_source())
-        if len(res):
-            url = sel.get_location().split('/')
-            base = '/'.join(url[:3])
-            final = []
-            for r in res:
-                if r.startswith('/'):
-                    final.append(base+r)
-                else:
-                    final.append(base+'/'+r)
-            return final
+    tag = soup.find(**kwargs)
+    url = tag['href']
+    if url.startswith('http'):
+        final_url = url
     else:
-        return res
+        final_url = top_url+url
+
+    if final:
+        return final_url, None
+    else:
+        return None, get_soup(final_url)
 
 
 
 
-def process_sd(sel):
-    return False
-
-def acs_custom(sel):
-    return False
-
-def change_focus(sel, new_window = 'undefined'):
-    sel.select_window(new_window)
-    return True
-
-def close_window(sel):
-    sel.close()
 
 if __name__ == '__main__':
 
