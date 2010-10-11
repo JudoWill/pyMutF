@@ -4,6 +4,7 @@ import re, os.path, os
 import logging
 from types import FunctionType, StringType
 from random import shuffle
+from functools import partial
 #from optparse import OptionParser
 
 from BeautifulSoup import BeautifulSoup
@@ -46,10 +47,14 @@ def get_pdf(url, uid, path = '/results'):
         handle.write(data.read())
     logging.warning('Sucess for %s' % uid)
 
-def process_soup(kwargs, soup, top_url, final = False):
+def process_soup(kwargs, soup, top_url, final = False, parent = True):
 
     tag = soup.find(**kwargs)
-    url = tag['href']
+    if parent:
+        url = tag.parent['href']
+    else:
+        url = tag['href']
+
     if url.startswith('http'):
         final_url = url
     else:
@@ -84,9 +89,10 @@ if __name__ == '__main__':
     #this dict contains the "click" items that will bring the selenium item to a
     #page with the pdf-url
     path_dict = {
-        'linkout-icon-unknown-jvi_final':("//div[@id='content-block-1']/table[1]/tbody/tr/td/table/tbody/tr[4]/td[2]/strong/a/strong",),
-        'linkout-icon-unknown-4690':tuple(),
-        'linkout-icon-unknown-jem_final':("link=Full Text (PDF)",),
+        'linkout-icon-unknown-jvi_final':None,
+        'linkout-icon-unknown-4690':None,
+        'linkout-icon-unknown-jem_final':(partial(process_soup, {'text':"Full Text (PDF)"}),
+                                            partial(process_soup, {})),
         'linkout-icon-unknown-jbc_full_free':tuple(),
         'linkout-icon-unknown-UChicago100x25':("link=PDF Version",),
         'linkout-icon-unknown-aac_final':("link=Full Text (PDF)",),
