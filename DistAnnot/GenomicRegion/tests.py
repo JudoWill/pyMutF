@@ -16,7 +16,7 @@ class GenomeViewsTest(TestCase):
     msg_prefix = 'genome'
 
     def get_object_list_url(self):
-        return '/Genomes/genome/object_list/'
+        return '/pymutf/Genomes/genome/object_list/'
 
     def test_list_by_slug(self):
         resp = self.client.get(self.get_object_list_url())
@@ -45,7 +45,7 @@ class GeneViewsTest(GenomeViewsTest):
     msg_prefix = 'gene'
 
     def get_object_list_url(self):
-        return '/Genomes/gene/object_list/'
+        return '/pymutf/Genomes/gene/object_list/'
 
 class OrganismViewsTest(GenomeViewsTest):
 
@@ -55,7 +55,7 @@ class OrganismViewsTest(GenomeViewsTest):
     msg_prefix = 'organism'
 
     def get_object_list_url(self):
-        return '/Genomes/organism/object_list/'
+        return '/pymutf/Genomes/organism/object_list/'
 
 class ProductViewsTest(GenomeViewsTest):
 
@@ -65,4 +65,4 @@ class ProductViewsTest(GenomeViewsTest):
     msg_prefix = 'product'
 
     def get_object_list_url(self):
-        return '/Genomes/product/object_list/'
+        return '/pymutf/Genomes/product/object_list/'
